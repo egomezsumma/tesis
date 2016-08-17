@@ -46,21 +46,39 @@ en (ref a paper de daniel C alexander) que explota la información presente en
 imágenes adquiridas con alta resolución para mejorar la resolución de otras con 
 baja resolución. También la técnica conocida como súper-resolución, que 
 consiste en obtener una imagen con alta resolución utilizando varias 
-imágenes con baja resolución del mismo sujeto (Irani and peleg 1993; 
-Greenspan et al 2002; Greenspan et al 2009; Gholipour et al 2010; cs 2015). Y 
-otras que por medio de técnicas de interpolación intentan aumentar la resolución 
-de una imagen con baja resolución (Manjon et al 2010).
+imágenes con baja resolución del mismo sujeto con un esquema de 
+adquisición determinado (Irani and peleg 1993; Greenspan et al 2002; Greenspan 
+et al 2009; Gholipour et al 2010; cs 2015). Y otras que por medio de técnicas 
+de interpolación intentan aumentar la resolución de una imagen con baja 
+resolución (Manjon et al 2010). Estas técnicas pueden mejorar la resolución de 
+las imagenes usando la representacion dwi de la señal de disfusión (tal como la 
+adquieren los escaners). O bien pueden utilizar algun modelo de la señal de 
+difusion, de los tantos que existen en el area.
 
 
-\subsection{Explicar tecnicas auxiliares a utilizar}
-Optimizacion convexa, Mapl
+\subsection{Explicar técnicas auxiliares a utilizar}
+Modelos de difusion, Mapl 
 
 \subsection{Otras propuestas con el mismo objetivo}
-Los dos papper de realce
+Por ejemplo en el trabajo de (ref paper 1) se proponen hacer transferencia de 
+calidad de imágenes utilizando algoritmos de aprendizaje automático 
+(\textit{machine learning} del ingles) para reconstruir la imagen con alta 
+calidad. Entrenando a dichos algoritmo con un conjuntos de datos de alta 
+calidad. La novedad de este trabajo es que el realce no se hace directamente 
+sobre la representación dwi de la imagen sino sobre los parametros de algun 
+modelo de la señal de difusión. En particular lo hacen para los modelos DTI (ref 
+dti) y NODDI (ref NODDI). La ventaja (bla bla NODDI no se puede sin multi 
+shel). En cambio el trabajo de (paper 2) combina la tecnica de super-resolución 
+con un modelo especifico de la señal de difusion (compressed-sensing). A 
+diferencia del primero trabajo, utiliza un algoritmo de optimización convexa 
+para reconstruir la imagen con alta calidad.
 
 \subsection{El objetivo}
-Combinar la tecnica de trasn de calidad, utilizando el modelo MAPL que toma en 
-cuenta ademas la dimension temporal. 
+El objetivo de este trabajo es analizar la aplicación de la técnica de 
+transferencia de calidad, utilizando el modelo MAPL que toma en cuenta además 
+la dimensión temporal. Tanto la complejidad espacial, como temporal las 
+operaciones necesarias, representan un desafío computacional, en cuanto a 
+desarrollar un algoritmo eficiente que lleve a cabo el realce buscado.
 
 
 
