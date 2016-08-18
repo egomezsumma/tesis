@@ -22,17 +22,16 @@
 \section{Resumen}
 
 \subsection{Necesidad que da origen a nuestro objetivo en el area}
-Las Resonancia Magnética de difusión (dMRI del termino en ingles) 
-es una técnica útil para generar imágenes de órganos internos del cuerpo, sin 
-la necesidad de someter al mismo a un procedimiento quirúrgico. Estas 
-proveen valiosa información sobre la micro estructura de los diferentes 
-tipos de tejidos del cerebro (ref a algun paper fundacional de dmri). Los 
-estándares de resolución de hoy en día permiten hacer diversos análisis sobre 
-conjuntos de fibras de mediano y gran tamaño. Sin embargo, estos análisis 
+Las Resonancia Magnética de difusión (dMRI en ingles) es una técnica útil para generar imágenes de órganos internos del 
+cuerpo, sin la necesidad de someter al mismo a un procedimiento quirúrgico. Las imágenes construidas por esta técnica 
+están fuertemente relacionadas con la difusión de las partículas de agua en los tejidos. Estas proveen valiosa 
+información sobre la micro estructura de los diferentes tipos de tejidos del cerebro (LeBihan and 
+bretorn 1985). Los estándares de resolución de hoy en día de dichas imágenes, permiten hacer 
+diversos análisis sobre conjuntos de fibras de mediano y gran tamaño. Sin embargo, estos análisis 
 pierden precisión en regiones donde las fibras son muy pequeñas en comparación 
-al tamaño del voxel. Consecuentemente, existe la necesidad de 
+al tamaño del voxel (píxel en tres dimensiones). Consecuentemente, existe la necesidad de 
 incrementar la resolución espacial de las imágenes dMRI. Los limites para 
-obtener imágenes en alta resolución están fuertemente relacionados con el 
+obtener imágenes con alta resolución están fuertemente relacionados con el 
 tiempo de adquisición de las mismas y la relación señal ruido (la cual decrese 
 cuanto mas pequeño es el voxel). Hoy en día, existen escáners que pueden 
 producir imágenes con muy alta resolución. Pero los mismos son muy costos e 
@@ -40,24 +39,23 @@ impracticos para escenarios clínicos.
 
 
 \subsection{Propuestas que dan origen a nuestro objetivo}
-Recientemente varias métodos han sido propuestos para obtener imágenes con 
-alta resolución. Como por ejemplo transferencia de calidad imágenes utilizada 
-en (ref a paper de daniel C alexander) que explota la información presente en 
-imágenes adquiridas con alta resolución para mejorar la resolución de otras con 
-baja resolución. También la técnica conocida como súper-resolución, que 
-consiste en obtener una imagen con alta resolución utilizando varias 
-imágenes con baja resolución del mismo sujeto con un esquema de 
-adquisición determinado (Irani and peleg 1993; Greenspan et al 2002; Greenspan 
-et al 2009; Gholipour et al 2010; cs 2015). Y otras que por medio de técnicas 
-de interpolación intentan aumentar la resolución de una imagen con baja 
-resolución (Manjon et al 2010). Estas técnicas pueden mejorar la resolución de 
-las imagenes usando la representacion dwi de la señal de disfusión (tal como la 
-adquieren los escaners). O bien pueden utilizar algun modelo de la señal de 
-difusion, de los tantos que existen en el area.
+Recientemente varias técnicas han sido propuestos para obtener imágenes con alta resolución. Como por ejemplo 
+transferencia de calidad de imágenes (\textit{image quality transfer} en ingles). La cual coincidiste en explotar la 
+información presente en imágenes adquiridas con alta resolución para mejorar otras con baja resolución 
+(ref a paper de daniel C alexander). También la técnica conocida como súper-resolución, que consiste en obtener una 
+imagen con alta resolución utilizando varias imágenes con baja resolución. La adquisición de las imágenes con baja 
+resolución deben seguir un esquema determinado y ser del mismo sujeto (Irani and peleg 1993; Greenspan et al 
+2002; Greenspan et al 2009; Gholipour et al 2010; cs 2015). Y otras que por medio de técnicas de interpolación intentan 
+aumentar la resolución de una imagen con baja resolución (Manjon et al 2010). Estas técnicas pueden mejorar la 
+resolución de las imágenes usando la representación de la señal de difusión tal como la adquieren los escaners. O bien 
+pueden utilizar algún modelo de la señal de difusión, de los tantos que existen en el área.
 
 
 \subsection{Explicar técnicas auxiliares a utilizar}
-Modelos de difusion, Mapl 
+Los modelos de difusión tienen como objetivo recuperar información más detallada sobre la orientación de las fibras a 
+partir de la señal de difusión. Entre ellos se encuentra el modelo \textit{Diffusion Tensor Imaging} (DTI). En el cual 
+se representa la difusión de las partículas de agua con un tensor de segundo orden. También existen modelos mas 
+complejos como por ejemplo MAPL [breve explicacion] (ref a Rutger). 
 
 \subsection{Otras propuestas con el mismo objetivo}
 Por ejemplo en el trabajo de (ref paper 1) se proponen hacer transferencia de 
@@ -76,7 +74,7 @@ para reconstruir la imagen con alta calidad.
 \subsection{El objetivo}
 El objetivo de este trabajo es analizar la aplicación de la técnica de 
 transferencia de calidad, utilizando el modelo MAPL que toma en cuenta además 
-la dimensión temporal. Tanto la complejidad espacial, como temporal las 
+la dimensión temporal. Tanto la complejidad espacial, como temporal de las 
 operaciones necesarias, representan un desafío computacional, en cuanto a 
 desarrollar un algoritmo eficiente que lleve a cabo el realce buscado.
 
