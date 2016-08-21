@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
+\usepackage[left=2cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
 
@@ -37,25 +37,21 @@ resolución de imágenes de difusión de menor calidad. Esto es conocido como
 transferencia de calidad de imágenes (o \textit{image quality transfer} del 
 término en ingles). 
 
-Usaremos el conjunto de datos \textit{standford hardi}, provisto por la 
-librer\'ia \textit{Dipy} como nuestra imagen de alta calidad. El mismo tiene 
-una resolución espacial de $2\times2\times2\ mm^3$ con 160 direcciones 
-gradientes con $b=2000\ s/mm^2$. Artificialmente generaremos (utilizando el 
-m\'etodo \textit{reslice} de Dipy que hace una interpolación cubica) una imagen 
-de difusión de baja calidad, a partir de la imagen provista por \textit{standford 
-hardi}. Luego mejoraremos la resolución de la misma y la 
-compararemos con la original (figura \ref{inputimg}).
+Usaremos el conjunto de datos de seis sujetos de la base de datos \textit{Human Connectome Project} como nuestra imagen 
+de alta calidad. Los mismos tiene una resolución espacial de $x\times x\times x\ mm^3$ con 288 direcciones 
+gradientes y 17 b-valores diferentes. En nuestro caso usaremos solo los gradientes con $b=2000\ s/mm^2$. 
+Artificialmente generaremos (utilizando el m\'etodo \textit{reslice} de Dipy que hace una interpolación cubica) una 
+imagen de difusión de baja calidad por cada uno de los sujetos. Luego mejoraremos la resolución de las misma y la 
+compararemos con la original (figura \ref{hr_vs_lr_input}).
 
 
 \begin{figure}[h]
 %\centering
-\includegraphics[width=0.5\textwidth]{hardi.pdf}
-\includegraphics[width=0.5\textwidth]{downsampling.pdf}
-\caption{Corte coronal del conjunto de datos $S_0$. A la izquierda la imagen 
-original de $81\times106\times76$ y a la derecha su equivalente disminuida en 
-resolución de $43\times55\times40$. El rectángulo muestra el sub volumen con el 
-que trabajaremos} 
-\label{inputimg}
+%\includegraphics[width=0.5\textwidth]{hr_vs_lr_input.pdf}
+\caption{Corte coronal del sujeto 180937 conjunto de datos $S_0$. A la izquierda la imagen 
+original de $12\times12\times12$ y a la derecha su equivalente disminuida en 
+resolución de $6\times6\times6$.} 
+\label{hr_vs_lr_input}
 \end{figure}%
 
 
@@ -75,67 +71,38 @@ a las imágenes en baja resolución como la versión sub muestreada de su
 equivalente en alta resolución. Luego el modelo de adquisición de la imagen de 
 alta resolución lo podemos expresar como
 
-$$  Y^{LR} = GY^{HR}$$
+$$  Y^{LR} = GY^{HR} $$
 
 Donde $G$ es la matriz de sub muestreo de la resolución espacial. En 
-nuestra implementación obtendremos $G$ entrenando un algoritmo de 
-\textit{machine learning} con pares de sub volúmenes en baja resolución con su 
-correspondiente en alta resolución. Para eso construiremos el conjunto de 
-entrenamiento $T=\{x_i, y_i\}_{i}^{|T|}$, donde cada $x_i$ tiene dimensión $N^{vlrb}$ y los $y_i$ 
-dimensión $N^{vhrb}$. En este caso lo construimos a partir de un 
-mismo sub volumen pero con ruido $gauseano$ agregado artificialmente .
+nuestra implementación obtendremos $G$ entrenando un algoritmo de aprendizaje automático ( \textit{machine learning} en 
+ingles) con pares de volúmenes en baja resolución con su correspondiente en alta resolución. Para eso construiremos el 
+conjunto de entrenamiento $T=\{x_i, y_i\}_{i}^{|T|}$, donde cada $x_i$ tiene dimensión $N^{vlrb}$ y los $y_i$ 
+dimensión $N^{vhrb}$. Utilizaremos la técnica de validación cruzada dejando uno afuera para evaluar los resultados de 
+nuestro análisis y tratar de garantizar que sean independientes al conjunto de entrenamiento utilizado. Para 
+entrenar usaremos el algoritmo \textit{LinearRegression} de \textit{machine learning}, provisto por la librería 
+\textit{Scikit Learn}.
 
 
-Usaremos el algoritmo de \textit{machine learning} \textit{LinearRegression},
-provisto por 
-la librer\'ia \textit{Scikit Learn}. Para entrenar el algoritmo dispusimos 10 
-pares de sub vol\'umenes. Los tama\~nos de los sub 
-vol\'umenes fueron de $6\times6\times6$ y $12\times12\times12$ para la baja y 
-para la alta resolución respectivamente. Ambos con 6 gradientes diferentes 
-(todos ellos con $b=2000\ s/mm^2$).
-
-
-
-Con el algoritmo \textit{machine learning} computaremos la transformación 
-lineal $G=YX^{\dagger}$ donde $Y$ tiene como columnas los $y_i$, $X$ tiene como 
-columnas los $x_i$ y $X^{\dagger}$ es la pseudo inversa de $X$.
+Con el algoritmo \textit{machine learning} computaremos la transformación lineal $G=YX^{\dagger}$ donde $Y$ tiene como 
+columnas los $y_i$, $X$ tiene como columnas los $x_i$ y $X^{\dagger}$ es la pseudo inversa de $X$.
 %con el conjunto de imágenes que contamos para entrenar
-Luego de obtener $G$, planteamos el siguiente problema de optimización convexa 
-para obtener la imagen en alta calidad buscada
+Luego de obtener $G$, planteamos el siguiente problema de optimización convexa para obtener la imagen en alta calidad 
+buscada
 
 $$  \min_{Y^{HR}} \{ || G Y^{HR} - Y^{LR} ||^2  \}$$
 
 Dicha optimización la calculamos usando la librería \textit{CVXPY}.
+Adicionalmente, forzaremos al algoritmo de optimización a que la señal reconstruida tenga suavidad espacial agregándole 
+la semi norma total variación (TV).
 
-Probamos el algoritmo para diferentes conjuntos de entrenamiento. Para 
-ello, agregamos aleatoriamente ruido $gauseano$ a cada par del conjunto de 
-entrenamiento. Es decir, para cada par en el conjunto de entrenamiento 
-$T^{SNR}$ agregamos ruido con una relación señal ruido igual a $SNR$ (lo 
-hicimos con $SNR$\footnote{SNR lo definimos aquí como $S_0/\sigma $, 
-donde $\sigma$ es el desvío estándar de la distribución gauseana.}$= 25,\ 50,\ 
-75,\ 100$ y $Inf$). A partir de estos conjuntos obtuvimos distintas $G^{SNR}$. 
-En la figura \ref{snr_lr_hr} podemos ver los sub volumen en alta y baja 
-resolución originales y uno de los pares usados para entrenar al azar. 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.5\textwidth]{hr_Tsnr75.pdf}
-\includegraphics[width=0.5\textwidth]{lr_Tsnr75.pdf}
-\caption{En la fila arriba de izquierda a derecha la imagen en alta 
-resolución (original) y la equivalente con el ruido adicionado respectivamente. 
-En la fila de abajo, de izquierda a derecha la imagen en baja resolución 
-sin ruido y la equivalente con el ruido adicionado 
-respectivamente. El par con ruido pertenece al conjunto de entrenamiento 
-$T^{75}$} 
-\label{snr_lr_hr}
-\end{figure}%
+$$ ||Y^{HR}||_{TV} = \sum_{x_{ij} \in Y^{HR}} \left\| \left[  \begin{array}{ccc}
+x_{i+1,j}  & -x_{i,j} \\
+x_{i,j+1}  & -x_{i,j} \end{array} \right]  \right\|$$
 
 En la sección de resultados compararemos la imagen original con la reconstruida por el 
-experimento. Luego compararemos los resultados según el ruido agregado 
-artificialmente al conjunto 
-de entrenamiento con el que estimamos $G$. De esta manera veremos como se comporta nuestro 
-m\'etodo cuando el conjunto de datos con el que contamos para hacer la transferencia de calidad no 
-es tan bueno.
+experimento. Luego compararemos los resultados según la iteración de la validación cruzada sobre el conjunto de 
+entrenamiento con el que estimamos $G$. De esta manera veremos como se comporta nuestro m\'etodo cuando el conjunto de 
+datos con el que contamos para hacer la transferencia de calidad no es tan bueno.
 
 \section{Resultados}
 
@@ -165,38 +132,60 @@ datos no se comporta de manera lineal.
 \end{itemize}
 
 
+En la figura \ref{resultado} se ve el resultado del algoritmo de optimización con la regularización de la norma TV.
+
+\begin{figure}[H]
+\includegraphics[scale=0.8]{Yhr_compare_s180129.pdf}
+\caption{Resultado de la reconstrucción usando la norma TV. }
+\label{resultado}
+\end{figure}
 
 
+Además probamos el resultado del algoritmo de \textit{machine learning} reconstruyendo el 
+volumen de baja resolución de la siguiente manera
+
+$$\widehat{Y^{LR}} = GY^{HR}$$
 
 En la tabla \ref{tab:res} podemos ver el valor mínimo alcanzado por el algoritmo de minimización, el 
 tiempo de ejecución del mismo, y las normas de la imagen estimada y la diferencia entre la estimada 
-y la original (siendo $||Y^{HR}_{original}|| = 18093$), seg\'un la se\~nal ruido agregada al 
-conjunto de entrenamiento. Adem\'as por cada conjunto de entrenamento probamos el algoritmo de 
-minimizaci\'on con distintos sub volumenes $(Y^{LR})^{SNR}$ con distintos valores se\~nal ruido.
+y la original. 
 
 
 
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ |c|c|c|c|c|c| }
+\begin{tabular}{ |c|c|c|c|c|c|c| }
  \hline
- SNR & Valor Óptimo & Tiempo  & $||Y^{HR}||$ & $||Y^{LR}||$ & $||Y^{HR}-Y^{HR}_{original}||$\\
+ tv & $||\widehat{Y^{HR}}||$ & $||Y^{HR}||$& $||\widehat{Y^{LR}}||$ &$||Y^{LR}||$ & $||\widehat{Y^{HR}}-Y^{HR}||$& 
+$||\widehat{Y^{LR}}-Y^{LR}||$\\
  \hline 
- inf & $3034\pm494$  & $5'07''$  & $17908\pm16$ & $6427\pm5$  & $859\pm3$\\
- 200 & $3058\pm530$  & $5'02''$  & $17926\pm20$ & $6433\pm15$ & $811\pm3$  \\
- 100 & $3054\pm556$  & $5'08''$  & $17917\pm3$  & $6430\pm9$  & $723\pm1$  \\  
- 75  & $3063\pm540$  & $5'33''$  & $17948\pm38$ & $6441\pm21$ & $653\pm6$  \\
- 50  & $3083\pm559$  & $5'04''$  & $17893\pm46$ & $6420\pm9$  & $713\pm14$ \\  
- 25  & $3051\pm500$  & $5'09''$  & $17931\pm18$ & $6435\pm13$ & $770\pm3$  \\  
- %00  & $38653.04$ & $0'0''$    & $108.34$ & $0$  & $16497.96$  \\
-\hline
+ si & $100050\pm17750$ & $13164\pm3057$  & $48974\pm12775$ & $48974\pm12775$ & 
+$48974\pm12775$ & $48974\pm12775$ \\
+ no & $17926\pm20$ & $6433\pm15$ & $811\pm3$ & $48974\pm12775$ & $48974\pm12775$  & 
+$48974\pm12775$\\
+ \hline
 \end{tabular}
-\caption{El valor alcanzado por el algoritmo de minimización, el tiempo de ejecución, la 
-norma de la imagen estimada y la norma de la diferencia entre la estima y la original, en cada 
-caso según el valor de se\~nal ruido agregado al conjunto de entrenamiento. El algoritmo fue 
-probado con disitintas $Y^{LR}$ de entradas. Todas ellas con un valor diferente de se\~nal ruido.}
+
+\caption{La norma de la imagen estimada, la original y la norma de la diferencia entre la estima y la original, de la 
+imagen con alta resolución y baja resolución.}
 \label{tab:res}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |c|c|c| }
+ \hline
+ tv & Valor Óptimo & tiempo \\
+ \hline 
+ si &$226618\pm75970$  & $0'24''$  \\
+ no &$3058\pm530$  & $5'02''$  \\
+ \hline
+\end{tabular}
+
+\caption{El valor alcanzado por el algoritmo de minimización y  el tiempo de ejecución.}
+\label{tab:res_time}
 \end{table}
 
 La figura \ref{mse_cmp} muestra una rebanada coronal de la imagen de difusión original, la producida 
@@ -206,48 +195,73 @@ imagen $ECM$.
 
 \begin{figure}[H]
 \centering        
-\includegraphics[scale=0.7]{mse_snr50_voxels_b1_cmp.pdf}
-\caption{De izquierda a derecha una rebanada coronal de un gradiente arbitrario de la imagen 
+\includegraphics[scale=0.7]{mse_yhr_s180937_voxels_cmp.pdf}
+\caption{De izquierda a derecha una rebanada coronal de la imagen 
 original, la producida por el m\'etodo y el error cuadrático medio por voxel de la 
-representación DWI de la imagen. La imagen fue resultado del m\'etodo con $T^{75}$ y 
-$(Y^{LR})^{75}$.}
+representación DWI de la imagen. La imagen fue resultado de la iteración que dejo afuera al sujeto 180937.}
 \label{mse_cmp}
 \end{figure}
 
 
 La figura \ref{cdet_cmp} muestra también una rebanada coronal de la imagen 
 original, la producida por el m\'etodo y el coeficiente de determinación entre las \'ultimas dos. 
-Dicho coeficiente nos aporta información de cuan bueno fue el modelo que utilizamos para fitear 
+Dicho coeficiente nos aporta información de cuan bueno fue el modelo que utilizamos para ajustar 
 los datos. En nuestro caso el modelo usado fue lineal y gran parte de los voxeles presentan un 
-coeficiente de determinación por encima del $95\%$. Esto significa que el modelo elegido es bueno 
-para este conjunto de entrada.
+coeficiente de determinación negativo. Esto significa que el modelo elegido no se comporta de manera lineal.
 
 \begin{figure}[H]
 \centering        
-\includegraphics[scale=0.7]{cdet_snr50_voxels_b1_cmp.pdf}
+\includegraphics[scale=0.7]{cdet_yhr_s180937_voxels_cmp.pdf}
 \caption{De izquierda a derecha una rebanada coronal de un gradiente arbitrario de la imagen 
-original, la producida por el m\'etodo y el el coeficiente de determinación por voxel de la 
-representación DWI de la imagen. La imagen fue resultado del m\'etodo con $T^{75}$ y 
-$(Y^{LR})^{75}$.}
+original, la producida por el m\'etodo y el coeficiente de determinación por voxel de la 
+representación DWI de la imagen. La imagen fue resultado de la iteración que dejo afuera al sujeto 180937.}
 \label{cdet_cmp}
 \end{figure}
 
 
-En la figura \ref{mse_por_gradientes_by_snr_todos} graficamos el error 
-cuadrático medio de todo el 
-sub volumen por cada uno de los 6 gradientes utilizados para los distintos conjuntos de 
-entrenamiento. Como se puede ver el error se hace marcadamente mas grande cuando la relacion 
-se\~nal ruido de la imagen disminuye. 
+En la figura \ref{error_norma} graficamos la norma del error cometido en la reconstrucción tanto del volumen con 
+alta resolución y con baja resolución.
 
+
+\begin{figure}[H]
+%\centering        
+\includegraphics[scale=0.4]{norma_error_yhr.pdf}
+\includegraphics[scale=0.4]{norma_error_lr.pdf}
+
+\includegraphics[scale=0.4]{cmp_normas_yhr.pdf}
+\includegraphics[scale=0.4]{cmp_normas_ylr.pdf}
+\caption{Arriba la norma de la diferencia entre los volúmenes reconstruidos y los originales. Abajo la comparación 
+entre el valor de sus normas por cada iteración realizada. }
+\label{error_norma}
+\end{figure}
+
+
+Finalmente en la figura \ref{opt_vals} vemos el mínimo valor encontrado por el algoritmo para nuestra expresión.
+
+\begin{figure}[H]
+\centering        
+\includegraphics[scale=0.7]{opt_vals.pdf}
+\caption{El valor mínimo alcanzado por el algoritmo de optimización en cada iteración realizada. }
+\label{opt_vals}
+\end{figure}
+
+
+\begin{figure}[H]
+%\centering        
+\includegraphics[scale=0.4]{mse_hist_s180937.pdf}
+\includegraphics[scale=0.4]{cdet_hist_s180937.pdf}
+%\caption{El valor minimo alcanzado por el algoritmo de optimización en cada iteración realizada. }
+%\label{opt_vals}
+\end{figure}
 
 
 \begin{figure}[H]
 \centering        
-\includegraphics[scale=0.7]{mse_por_gradientes_by_snr_todos.pdf}
-\caption{El error cuadrático medio por cada una de las 6 direcciones gradientes 
-utilizadas por cada conjunto de entrenamiento con SNR igual a $25,\ 50,\ 75,\ 100$ y $200$. }
-\label{mse_por_gradientes_by_snr_todos}
+\includegraphics[scale=0.7]{eabs_norma_yhr.pdf}
+\caption{Error relativo de la imagen en alta resolución reconstruida. }
+%\label{opt_vals}
 \end{figure}
+
 
 \clearpage
 \section{Conclusiones}
@@ -264,7 +278,7 @@ calcular el $ECM$. Habría que probar estos resultados al intentar
 usar los datos para hacer cosas mas complejas como por ejemplo un tractograma.
 
 %\clearpage
-%\section{Ap\'endice}
+%\section{Apendice}
 %\input{gradiente_demo}
 
 
