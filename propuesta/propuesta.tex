@@ -67,18 +67,19 @@ fiteo de los coeficientes que MAP define.
 
 
 \subsection{Otras propuestas con el mismo objetivo}
-Por ejemplo en el trabajo de \citet{Alexander2014} se proponen hacer transferencia de 
+Por ejemplo en el trabajo de \citet{Alexander2014} se propone hacer transferencia de 
 calidad de imágenes utilizando algoritmos de aprendizaje automático 
 (\textit{machine learning} del ingles) para reconstruir la imagen con alta 
 calidad. Entrenando a dichos algoritmo con un conjuntos de datos de alta 
 calidad. La novedad de este trabajo es que el realce no se hace directamente 
-sobre la representación dwi de la imagen sino sobre los parametros de algun 
-modelo de la señal de difusión. En particular lo hacen para los modelos DTI (ref 
-dti) y NODDI (ref NODDI). La ventaja (bla bla NODDI no se puede sin multi 
-shel). En cambio el trabajo de \citet{Ning2016} combina la tecnica de super-resolución 
-con un modelo especifico de la señal de difusion (compressed-sensing). A 
-diferencia del primero trabajo, utiliza un algoritmo de optimización convexa 
-para reconstruir la imagen con alta calidad.
+sobre la señal de difusión tal como la adquieren los escaners, sino sobre los 
+parametros de algun modelo de difusión. En particular lo hacen para los modelos DTI 
+(ref dti) y NODDI (ref NODDI). La ventaja de hacer el entrenamiento sobre el modelo en vez de la 
+se\~nal es que se puede utilizar para extrapolar conjuntos de datos que no cumplan con 
+las precondiciones para un modelo determinado. En cambio el trabajo de \citet{Ning2016} combina la 
+t\'ecnica de super-resolución con un modelo especifico de la señal de difusion 
+(\textit{compressed-sensing}). A diferencia del primer trabajo, utiliza un algoritmo de 
+optimización convexa para reconstruir la imagen con alta calidad.
 
 \subsection{El objetivo}
 El objetivo de este trabajo es analizar la aplicación de la técnica de 
