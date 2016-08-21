@@ -1,0 +1,278 @@
+\documentclass[a4paper,10pt]{article}%
+%\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+
+
+%opening
+\title{}
+\author{Leonel Exequiel Gómez}
+
+
+\usepackage{graphicx}
+\graphicspath{ {img/} }
+
+%Path in Unix-like (Linux, OsX) format
+\graphicspath{ {img/} }
+
+
+
+\begin{document}
+
+\maketitle
+
+
+
+\section{Introducción}
+Implementaremos un experimento basado en el paper de \citet{Alexander2014} y \citet{Ning2016}. 
+El objetivo del experimento es dado un conjunto de imágenes de difusión de 
+alta calidad, usar la información presente en las mismas para mejorar la 
+resolución de imágenes de difusión de menor calidad. Esto es conocido como 
+transferencia de calidad de imágenes (o \textit{image quality transfer} del 
+término en ingles). 
+
+Usaremos el conjunto de datos \textit{standford hardi}, provisto por la 
+librer\'ia \textit{Dipy} como nuestra imagen de alta calidad. El mismo tiene 
+una resolución espacial de $2\times2\times2\ mm^3$ con 160 direcciones 
+gradientes con $b=2000\ s/mm^2$. Artificialmente generaremos (utilizando el 
+m\'etodo \textit{reslice} de Dipy que hace una interpolación cubica) una imagen 
+de difusión de baja calidad, a partir de la imagen provista por \textit{standford 
+hardi}. Luego mejoraremos la resolución de la misma y la 
+compararemos con la original (figura \ref{inputimg}).
+
+
+\begin{figure}[h]
+%\centering
+\includegraphics[width=0.5\textwidth]{hardi.pdf}
+\includegraphics[width=0.5\textwidth]{downsampling.pdf}
+\caption{Corte coronal del conjunto de datos $S_0$. A la izquierda la imagen 
+original de $81\times106\times76$ y a la derecha su equivalente disminuida en 
+resolución de $43\times55\times40$. El rectángulo muestra el sub volumen con el 
+que trabajaremos} 
+\label{inputimg}
+\end{figure}%
+
+
+%Utilizaremos un subvolumen de $12\times12\times12$ con 6 valores de gradientes 
+%diferentes, todos ellos con $b=2000$.
+
+\section{Experimento}
+
+Dada una imagen en baja resolución predeciremos su equivalente en alta 
+resolución. Para ello denotaremos como $Y^{LR}$ a la imagen en baja resolución 
+representada como un vector columna de dimensión $N^{vlrb}$ con $N^{vlrb}$ la 
+cantidad de voxeles por la cantidad de gradientes de la imagen. Denotaremos 
+como $Y^{HR}$ a la imagen en alta resolución representada como un vector 
+columna de dimensión $N^{vhrb}$ con $N^{vhrb}$ la cantidad de voxeles por la 
+cantidad de gradientes de la imagen. Al igual que \citep{Ning2016} consideramos 
+a las imágenes en baja resolución como la versión sub muestreada de su 
+equivalente en alta resolución. Luego el modelo de adquisición de la imagen de 
+alta resolución lo podemos expresar como
+
+$$  Y^{LR} = GY^{HR}$$
+
+Donde $G$ es la matriz de sub muestreo de la resolución espacial. En 
+nuestra implementación obtendremos $G$ entrenando un algoritmo de 
+\textit{machine learning} con pares de sub volúmenes en baja resolución con su 
+correspondiente en alta resolución. Para eso construiremos el conjunto de 
+entrenamiento $T=\{x_i, y_i\}_{i}^{|T|}$, donde cada $x_i$ tiene dimensión $N^{vlrb}$ y los $y_i$ 
+dimensión $N^{vhrb}$. En este caso lo construimos a partir de un 
+mismo sub volumen pero con ruido $gauseano$ agregado artificialmente .
+
+
+Usaremos el algoritmo de \textit{machine learning} \textit{LinearRegression},
+provisto por 
+la librer\'ia \textit{Scikit Learn}. Para entrenar el algoritmo dispusimos 10 
+pares de sub vol\'umenes. Los tama\~nos de los sub 
+vol\'umenes fueron de $6\times6\times6$ y $12\times12\times12$ para la baja y 
+para la alta resolución respectivamente. Ambos con 6 gradientes diferentes 
+(todos ellos con $b=2000\ s/mm^2$).
+
+
+
+Con el algoritmo \textit{machine learning} computaremos la transformación 
+lineal $G=YX^{\dagger}$ donde $Y$ tiene como columnas los $y_i$, $X$ tiene como 
+columnas los $x_i$ y $X^{\dagger}$ es la pseudo inversa de $X$.
+%con el conjunto de imágenes que contamos para entrenar
+Luego de obtener $G$, planteamos el siguiente problema de optimización convexa 
+para obtener la imagen en alta calidad buscada
+
+$$  \min_{Y^{HR}} \{ || G Y^{HR} - Y^{LR} ||^2  \}$$
+
+Dicha optimización la calculamos usando la librería \textit{CVXPY}.
+
+Probamos el algoritmo para diferentes conjuntos de entrenamiento. Para 
+ello, agregamos aleatoriamente ruido $gauseano$ a cada par del conjunto de 
+entrenamiento. Es decir, para cada par en el conjunto de entrenamiento 
+$T^{SNR}$ agregamos ruido con una relación señal ruido igual a $SNR$ (lo 
+hicimos con $SNR$\footnote{SNR lo definimos aquí como $S_0/\sigma $, 
+donde $\sigma$ es el desvío estándar de la distribución gauseana.}$= 25,\ 50,\ 
+75,\ 100$ y $Inf$). A partir de estos conjuntos obtuvimos distintas $G^{SNR}$. 
+En la figura \ref{snr_lr_hr} podemos ver los sub volumen en alta y baja 
+resolución originales y uno de los pares usados para entrenar al azar. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{hr_Tsnr75.pdf}
+\includegraphics[width=0.5\textwidth]{lr_Tsnr75.pdf}
+\caption{En la fila arriba de izquierda a derecha la imagen en alta 
+resolución (original) y la equivalente con el ruido adicionado respectivamente. 
+En la fila de abajo, de izquierda a derecha la imagen en baja resolución 
+sin ruido y la equivalente con el ruido adicionado 
+respectivamente. El par con ruido pertenece al conjunto de entrenamiento 
+$T^{75}$} 
+\label{snr_lr_hr}
+\end{figure}%
+
+En la sección de resultados compararemos la imagen original con la reconstruida por el 
+experimento. Luego compararemos los resultados según el ruido agregado 
+artificialmente al conjunto 
+de entrenamiento con el que estimamos $G$. De esta manera veremos como se comporta nuestro 
+m\'etodo cuando el conjunto de datos con el que contamos para hacer la transferencia de calidad no 
+es tan bueno.
+
+\section{Resultados}
+
+Comparamos la imagen original con la reconstruida usando las siguientes 
+métricas:
+
+\begin{itemize}
+% \item Error cuadrático medio por parámetro DTI: Tomamos la imagen en su 
+%representación DTI y calculamos el error cuadrático medio de todos los voxeles 
+%del volumen por cada uno de los seis parámetros del modelo DTI.
+ \item Error cuadrático medio por voxel: Tomamos la imagen en su 
+representación DWI y calculamos el error cuadrático medio ($ECM$) por cada voxel del 
+volumen.
+%$$\frac{1}{160} \sum_{i=1}^{160} (S_{reconstruida}(q_i)-S_{original}(q_i))^2 $$ 
+ \item Error cuadrático medio por gradiente: Tomamos la imagen en su 
+representación DWI y calculamos el error cuadrático medio de todos los voxeles 
+por cada gradiente. Esta métrica nos permite observar cuanto dista la imagen 
+reconstruida con la original según el gradiente.
+ \item Coeficiente de determinación: El Coeficiente de Determinación, es el cuadrado del 
+coeficiente de correlación de Pearson. Nos da la proporción de variación de la variable a predecir. 
+Si la proporción es igual a 0, quiere decir que el modelo no es bueno. Si esta cerca de uno 
+quiere decir que el modelo es bueno y para valores negativos significa que nuestro conjunto de 
+datos no se comporta de manera lineal.
+ %\item Histograma: Calculamos el histograma de una rebanada coronal para un 
+%b-valor nulo y uno no nulo. Ver el histograma de una imagen nos ayuda analizar 
+%sobre el contrastarte de la misma.
+\end{itemize}
+
+
+
+
+
+En la tabla \ref{tab:res} podemos ver el valor mínimo alcanzado por el algoritmo de minimización, el 
+tiempo de ejecución del mismo, y las normas de la imagen estimada y la diferencia entre la estimada 
+y la original (siendo $||Y^{HR}_{original}|| = 18093$), seg\'un la se\~nal ruido agregada al 
+conjunto de entrenamiento. Adem\'as por cada conjunto de entrenamento probamos el algoritmo de 
+minimizaci\'on con distintos sub volumenes $(Y^{LR})^{SNR}$ con distintos valores se\~nal ruido.
+
+
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |c|c|c|c|c|c| }
+ \hline
+ SNR & Valor Óptimo & Tiempo  & $||Y^{HR}||$ & $||Y^{LR}||$ & $||Y^{HR}-Y^{HR}_{original}||$\\
+ \hline 
+ inf & $3034\pm494$  & $5'07''$  & $17908\pm16$ & $6427\pm5$  & $859\pm3$\\
+ 200 & $3058\pm530$  & $5'02''$  & $17926\pm20$ & $6433\pm15$ & $811\pm3$  \\
+ 100 & $3054\pm556$  & $5'08''$  & $17917\pm3$  & $6430\pm9$  & $723\pm1$  \\  
+ 75  & $3063\pm540$  & $5'33''$  & $17948\pm38$ & $6441\pm21$ & $653\pm6$  \\
+ 50  & $3083\pm559$  & $5'04''$  & $17893\pm46$ & $6420\pm9$  & $713\pm14$ \\  
+ 25  & $3051\pm500$  & $5'09''$  & $17931\pm18$ & $6435\pm13$ & $770\pm3$  \\  
+ %00  & $38653.04$ & $0'0''$    & $108.34$ & $0$  & $16497.96$  \\
+\hline
+\end{tabular}
+\caption{El valor alcanzado por el algoritmo de minimización, el tiempo de ejecución, la 
+norma de la imagen estimada y la norma de la diferencia entre la estima y la original, en cada 
+caso según el valor de se\~nal ruido agregado al conjunto de entrenamiento. El algoritmo fue 
+probado con disitintas $Y^{LR}$ de entradas. Todas ellas con un valor diferente de se\~nal ruido.}
+\label{tab:res}
+\end{table}
+
+La figura \ref{mse_cmp} muestra una rebanada coronal de la imagen de difusión original, la producida 
+por el m\'etodo y el error cuadrático medio entre las \'ultimas dos. Como 
+podemos apreciar solo algunos voxeles toman valores relativamente altos en la 
+imagen $ECM$.
+
+\begin{figure}[H]
+\centering        
+\includegraphics[scale=0.7]{mse_snr50_voxels_b1_cmp.pdf}
+\caption{De izquierda a derecha una rebanada coronal de un gradiente arbitrario de la imagen 
+original, la producida por el m\'etodo y el error cuadrático medio por voxel de la 
+representación DWI de la imagen. La imagen fue resultado del m\'etodo con $T^{75}$ y 
+$(Y^{LR})^{75}$.}
+\label{mse_cmp}
+\end{figure}
+
+
+La figura \ref{cdet_cmp} muestra también una rebanada coronal de la imagen 
+original, la producida por el m\'etodo y el coeficiente de determinación entre las \'ultimas dos. 
+Dicho coeficiente nos aporta información de cuan bueno fue el modelo que utilizamos para fitear 
+los datos. En nuestro caso el modelo usado fue lineal y gran parte de los voxeles presentan un 
+coeficiente de determinación por encima del $95\%$. Esto significa que el modelo elegido es bueno 
+para este conjunto de entrada.
+
+\begin{figure}[H]
+\centering        
+\includegraphics[scale=0.7]{cdet_snr50_voxels_b1_cmp.pdf}
+\caption{De izquierda a derecha una rebanada coronal de un gradiente arbitrario de la imagen 
+original, la producida por el m\'etodo y el el coeficiente de determinación por voxel de la 
+representación DWI de la imagen. La imagen fue resultado del m\'etodo con $T^{75}$ y 
+$(Y^{LR})^{75}$.}
+\label{cdet_cmp}
+\end{figure}
+
+
+En la figura \ref{mse_por_gradientes_by_snr_todos} graficamos el error 
+cuadrático medio de todo el 
+sub volumen por cada uno de los 6 gradientes utilizados para los distintos conjuntos de 
+entrenamiento. Como se puede ver el error se hace marcadamente mas grande cuando la relacion 
+se\~nal ruido de la imagen disminuye. 
+
+
+
+\begin{figure}[H]
+\centering        
+\includegraphics[scale=0.7]{mse_por_gradientes_by_snr_todos.pdf}
+\caption{El error cuadrático medio por cada una de las 6 direcciones gradientes 
+utilizadas por cada conjunto de entrenamiento con SNR igual a $25,\ 50,\ 75,\ 100$ y $200$. }
+\label{mse_por_gradientes_by_snr_todos}
+\end{figure}
+
+\clearpage
+\section{Conclusiones}
+%\input{conclusiones}
+El modelo propuesto se comporta bien para valores no tan altos de relación señal ruido. Como se ve 
+en la figura \ref{mse_por_gradientes_by_snr_todos} cuando la relación señal ruido es 
+inferior a 50 el error del método crece abruptamente. 
+
+A simple vista (incluso los resultados con $SNR=25$) el modelo aproxima bien la 
+imagen en cuanto a graficar la señal de difusión. Es decir, que respeta 
+bastante bien el contraste entre voxeles. Más allá de que las magnitudes de los 
+mismos difieran con las de la original y eso cause diferencias sensibles al 
+calcular el $ECM$. Habría que probar estos resultados al intentar 
+usar los datos para hacer cosas mas complejas como por ejemplo un tractograma.
+
+%\clearpage
+%\section{Ap\'endice}
+%\input{gradiente_demo}
+
+
+
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+
+
+
+\end{document}

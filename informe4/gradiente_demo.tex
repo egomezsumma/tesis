@@ -1,0 +1,89 @@
+
+
+Sean:
+
+ $ vhr \in  Z_{ \geq 0} $
+ 
+ $ bval \in  Z_{ \geq 0} $
+ 
+ $Y^{hr} \in \Re^{vhr\times bval}$
+ 
+ $Y^{lr} \in \Re^{vlr\times bval}$
+
+ $G \in \Re^{vlr\times vhr}$
+
+
+$$  \min_{Y^{hr}} \{ || G Y^{hr} - Y^{lr} ||^2  \}$$
+
+Llamo a :
+
+$f : \Re^{vhr\times bval} \rightarrow \Re^{vlr\times bval}$
+
+$$f(Y^{hr}) = G Y^{hr} - Y^{lr} $$
+
+$g:\Re^{vhr\times bval} \rightarrow \Re$
+
+$$g(Y^{hr}) = ||f(Y^{hr})||^2 $$
+
+con 
+
+$f_{ij}(Y^{hr}) : \Re$
+
+$$f_{ij}(Y^{hr}) = (\sum_{k=1}^{vhr} G_{ik} Y_{kj}^{hr}) - Y_{ij}^{lr} $$
+
+Luego
+
+$$g(Y^{hr}) = [ \sqrt{ \sum_{i=1}^{vlr} \sum_{j=1}^{bval} f_{ij}^2 (Y^{hr})} ]^2 $$
+
+
+$$g(Y^{hr}) =  \sum_{i=1}^{vlr} \sum_{j=1}^{bval} f_{ij}^2 (Y^{hr}) $$
+
+
+Para minimizar $g(Y^{hr})$ preciso $\nabla g \in \Re^{vhr\times bval} $.
+Si nos enfocamos en un componente del gradiente, osea la derivada parcial con respecto a 
+$Y_{ij}^{hr}$, al ser una sumatoria solo afecta a la derivada los sumandos que tiene a 
+$Y_{ij}^{hr}$ es decir:
+
+$$\frac{\partial g (Y^{hr})}{\partial Y_{ij}^{hr}} = \sum_{k=1}^{vlr} \frac{\partial 
+f_{kj}^2(Y^{hr})}{\partial Y_{ij}^{hr}}$$
+
+
+
+Por la derivada de la composición $(g \circ h)' (Y^{hr}) = g'(h(Y^{hr})) \ 
+h'(Y^{hr})$ tenemos que 
+
+$$\frac{\partial g (Y^{hr})}{\partial Y_{ij}^{hr}} = \sum_{k=1}^{vlr} 2 f_{kj}(Y^{hr}) 
+\frac{\partial 
+f_{kj}(Y^{hr})}{\partial Y_{ij}^{hr}}$$
+
+y 
+
+
+$$\frac{\partial f_{kj}(Y^{hr})}{\partial Y_{ij}^{hr}} = 0 + 0 + \cdots + 
+\underbrace{(G_{ki}Y_{ij}^{hr})'}_{k=i} + 0 + \cdots $$
+
+$$\frac{\partial f_{kj}(Y^{hr})}{\partial Y_{ij}^{hr}} = G_{ki}$$
+
+luego
+
+
+
+$$\frac{\partial g (Y^{hr})}{\partial Y_{ij}^{hr}} = \sum_{k=1}^{vlr} 2 f_{kj}(Y^{hr})G_{ki}$$
+
+
+$$\frac{\partial g (Y^{hr})}{\partial Y_{ij}^{hr}} = \sum_{k=1}^{vlr} 2 [(\sum_{p=1}^{vhr} G_{kp} 
+Y_{pj}^{hr}) - Y_{kj}^{lr}] G_{ki}$$
+
+
+
+$$\frac{\partial g (Y^{hr})}{\partial Y_{ij}^{hr}} = 2 \sum_{k=1}^{vlr} G_{ki} (\sum_{p=1}^{vhr} 
+G_{kp} 
+Y_{pj}^{hr}) - Y_{kj}^{lr}$$
+
+
+
+que equivale a su forma matricial
+
+
+$$\nabla g (Y^{hr}) = 2 G^t(G Y^{hr}-Y^{lr})$$
+
