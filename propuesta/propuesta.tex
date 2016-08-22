@@ -32,10 +32,10 @@ diversos análisis sobre conjuntos de fibras de mediano y gran tamaño. Sin emba
 pierden precisión en regiones donde las fibras son muy pequeñas en comparación 
 al tamaño del voxel (píxel en tres dimensiones). Consecuentemente, existe la necesidad de 
 incrementar la resolución espacial de las imágenes dMRI. Los limites para 
-obtener imágenes con alta resolución están fuertemente relacionados con el 
+obtener imágenes con alta resolución están relacionados con el 
 tiempo de adquisición de las mismas y la relación señal ruido (la cual decrece 
 con el tamaño voxel). Hoy en día, existen escáners que pueden 
-producir imágenes con muy alta resolución. Pero los mismos son muy costos e 
+producir imágenes con muy alta resolución. Pero los mismos son muy costosos e 
 imprácticos para escenarios clínicos.
 
 
@@ -48,22 +48,25 @@ información presente en imágenes adquiridas con alta resolución para mejorar 
 \citep{Alexander2014}. También la técnica conocida como súper-resolución, en 
 la cual se obtiene una imagen con alta resolución utilizando varias imágenes con baja resolución. 
 La adquisición de las imágenes con baja 
-resolución deben seguir un esquema determinado y ser del mismo sujeto (Irani and peleg 1993; Greenspan et al 
-2002; Greenspan et al 2009; Gholipour et al 2010; cs 2015). Y otras técnicas que por medio de interpolación 
-intentan aumentar la resolución de una imagen con baja resolución (Manjon et al 2010). Estas técnicas pueden mejorar la 
+resolución deben seguir un esquema determinado y ser del mismo sujeto (\cite{Irani1993,Robinson2010}; Greenspan et al 
+2002; Gholipour et al 2010). Y otras técnicas que por medio de interpolación 
+intentan aumentar la resolución de una imagen con baja resolución (\cite{Manjon2010}). Estas técnicas pueden mejorar la 
 resolución de las imágenes usando la representación de la señal de difusión tal como la adquieren los escáners. O bien 
 pueden utilizar algún modelo de la señal de difusión, de los tantos que existen en el área.
 
 
 \subsection{Explicar técnicas auxiliares a utilizar}
-Los modelos de difusión tienen como objetivo recuperar información más detallada sobre la orientación de las fibras a 
-partir de la señal de difusión. Entre ellos se encuentra el modelo \textit{Diffusion Tensor Imaging} (DTI). En el cual 
-se representa la difusión de las partículas de agua con un tensor de segundo orden. También existen modelos mas 
-complejos como por ejemplo MAPL \citep{Fick2016365}. Dicho modelo se propone extrapolar los 
-valores de la se\~nal de difusión para aquellos valores del dominio en los cuales la relaci\'on 
-se\~nal ruido comienza a gobernar la se\~nal. Este extiende el pre-existente modelo MAP (ref 
-map), utilizando la norma del Laplaciano de la se\~nal de difusión, como regularizaci\'on en el 
-ajuste de los coeficientes que MAP define.
+Uno de los principales objetivos de los modelos de difusión es recuperar información más detallada 
+sobre la orientación de las fibras en los tejidos del cerebro, a partir de la señal de difusión. Entre ellos se 
+encuentra el modelo \textit{Diffusion Tensor Imaging} (DTI). En el cual se representa la difusión de las partículas de 
+agua con un tensor de segundo orden. También existen modelos mas complejos como por ejemplo MAPL \citep{Fick2016365}. El 
+mismo pertenece a una familia de modelos que parte del enfoque de representar una señal como una sumatoria de otras 
+señales mas básicas. 
+%Con dicho modelo se propone extrapolar los valores de la se\~nal de difusión para aquellos valores del dominio en los 
+%cuales la relaci\'on se\~nal ruido comienza a gobernar la se\~nal. 
+Este extiende el pre-existente modelo llamado \textit{Mean Apparent Propagator} (MAP) (Ozarslan et al, [2013b]), 
+utilizando la norma del Laplaciano de la se\~nal de difusión, como regularizaci\'on en el ajuste de los coeficientes que 
+MAP define. 
 
 
 \subsection{Otras propuestas con el mismo objetivo}
@@ -86,7 +89,8 @@ El objetivo de este trabajo es analizar la aplicación de la técnica de
 transferencia de calidad, utilizando el modelo \textit{Multi-Spherical Diffusion MRI} que toma en cuenta además 
 la dimensión temporal \citep{Fick}. Tanto la complejidad espacial, como temporal de las 
 operaciones necesarias, representan un desafío computacional, en cuanto a 
-desarrollar un algoritmo eficiente que lleve a cabo el realce buscado.
+desarrollar un algoritmo eficiente que lleve a cabo el realce buscado. Utilizaremos la base de datos \tetxit{Human 
+Connectome Proyect}, la cual posee gran cantidad de imágenes dMRI estándares de resolución muy alta.
 
 
 
