@@ -117,8 +117,10 @@ El objetivo de este trabajo es analizar la aplicación de la técnica de
 transferencia de calidad, utilizando el modelo \textit{Multi-Spherical Diffusion MRI} que toma en cuenta además 
 la dimensión temporal \citep{Fick}. Para ello plantearemos el objetivo en términos de un problema 
 de optimización convexa que tengan en cuenta tanto el modelo de la se\~nal como la correlaci\'on 
-que existe entre voxeles vecinos. Tanto la complejidad espacial, como temporal de las 
-operaciones necesarias para trabajar con estos vol\'umenes de datos, representan un desafío 
+que existe entre voxeles vecinos. Plantearlo de esta manera nos permitirá sacar ventajas de la naturaleza esparza 
+de la señal de difusión. Además usaremos algoritmos de aprendizaje automático para clasificar los tipos de tejidos, 
+para poder hacer un realce mas preciso según la región de la imagen. Tanto la complejidad espacial, como temporal de 
+las operaciones necesarias para trabajar con estos vol\'umenes de datos, representan un desafío 
 computacional, en cuanto a desarrollar un algoritmo eficiente que lleve a cabo el realce buscado. 
 Utilizaremos la base de datos \textit{Human Connectome Proyect} \citep{Barch2013}, la cual posee 
 gran cantidad de imágenes dMRI estándares de resolución muy alta.
