@@ -35,7 +35,8 @@
 
 \section*{Resumen}
 
-\subsection{Necesidad que da origen a nuestro objetivo en el área}
+
+%\subsection{Necesidad que da origen a nuestro objetivo en el área}
 La Resonancia Magnética de difusión (dMRI en ingles) es una técnica útil para generar imágenes de 
 órganos internos del cuerpo, sin la necesidad de someter al mismo a un procedimiento quirúrgico. Las imágenes 
 construidas por esta técnica están fuertemente relacionadas con la difusión de las partículas de agua en los tejidos. 
@@ -49,23 +50,24 @@ pierden precisión en regiones donde las fibras son muy pequeñas en comparació
 dimensiones). Consecuentemente, existe la necesidad de incrementar tanto la resolución espacial, angular y temporal de 
 las imágenes dMRI. Dado que el dominio de muestreo de la señal que da origen a este tipo de imágenes, no es solo 
 espacial. El mismo comprende además la intensidad del gradiente de difusión aplicado, la dirección del mismo y el 
-tiempo de difusión. Es por ello que decimos que estas imágenes poseen resolución angular y temporal. La baja 
-relaci\'on se\~nal ruido y el tiempo de adquisici\'on de las imágenes dMRI son unos de los principales factores que 
-limitan la 
-resolución espacial. %Los limites para obtener imágenes con alta resolución están relacionados con 
+tiempo de difusión (espacio $q$ \citep{CALLAGHAN1990177}). Es por ello que decimos que estas imágenes poseen resolución 
+angular y temporal. La baja relaci\'on se\~nal ruido y el tiempo de adquisici\'on de las imágenes dMRI son unos de los 
+principales factores que limitan la resolución de las mismas. %Los limites para obtener imágenes con alta resolución 
+%están relacionados con 
 %el tiempo de adquisición de las mismas y la relación señal ruido (la cual decrece 
 %con el tamaño voxel). 
 Hoy en día, existen escáners que pueden 
 producir imágenes con muy alta resolución. Pero los mismos son muy costosos e 
 imprácticos para escenarios clínicos.
 
-\subsection{Explicar técnicas auxiliares a utilizar}
-Para obtener detalles mas finos sobre las características micro-estructurales a partir de las imágenes de difusión, se 
+
+%\subsection{Explicar técnicas auxiliares a utilizar}
+Para obtener detalles más finos sobre las características micro-estructurales a partir de las imágenes de difusión, se 
 puede ajustar un modelo matemático a los datos adquiridos. Uno de los principales objetivos de los modelos de difusión 
 es recuperar información más detallada sobre la orientación de las fibras, haciendo uso del 
 conocimiento a priori que se posee sobre la anatomía de los tejidos neuronales. Entre ellos se 
 encuentra el modelo \textit{Diffusion Tensor Imaging} (DTI). En el cual se representa la 
-se\~nal de difusión con un tensor de segundo orden \citep{Basser1994}. También existen modelos mas 
+se\~nal de difusión con un tensor de segundo orden \citep{Basser1994}. También existen modelos más 
 complejos como por ejemplo MAPL \citep{Fick2016365}. El mismo pertenece a una familia de modelos que parte del enfoque 
 de representar la señal de difusión con herramientas de análisis harmónico.
 %una señal como una sumatoria de otras 
@@ -77,25 +79,25 @@ utilizando la norma del Laplaciano de la se\~nal de difusión, como regularizaci
 que MAP define. 
 
 
-\subsection{Propuestas que dan origen a nuestro objetivo}
+%\subsection{Propuestas que dan origen a nuestro objetivo}
 Recientemente varias técnicas han sido propuestas para obtener imágenes con alta resolución. Como 
 por ejemplo 
 transferencia de calidad de imágenes (\textit{image quality transfer} en ingles). La cual 
 consiste en explotar la 
 información presente en imágenes adquiridas con alta resolución para mejorar otras con baja resolución 
 \citep{Alexander2014}. También la técnica conocida como súper-resolución, en 
-la cual se obtiene una imagen con alta resolución utilizando varias imágenes con baja resolución. 
+la cual se obtiene una imagen con alta resolución utilizando varias imágenes en baja resolución. 
 La adquisición de las imágenes con baja 
 resolución deben seguir un esquema determinado y ser del mismo sujeto (\cite{Irani1993,Robinson2010}; Greenspan et al 
 2002; Gholipour et al 2010). Y otras técnicas que por medio de interpolación 
-intentan aumentar la resolución de una imagen con baja resolución (\cite{Manjon2010}). Estas técnicas pueden mejorar la 
-resolución de las imágenes usando la representación de la señal de difusión tal como la adquieren los escáners. O bien 
-pueden utilizar algún modelo de la señal de difusión, de los tantos que existen en el área.
+intentan aumentar la resolución de una imagen a partir de la misma (\cite{Manjon2010}). Estas técnicas pueden 
+mejorar la resolución de las imágenes usando la representación de la señal de difusión tal como la adquieren los 
+escáners. O bien, pueden utilizar algún modelo de la señal de difusión, de los tantos que existen en el área.
 
 
 
 
-\subsection{Otras propuestas con el mismo objetivo}
+%\subsection{Otras propuestas con el mismo objetivo}
 Por ejemplo en el trabajo de \citet{Alexander2014} se propone hacer transferencia de 
 calidad de imágenes utilizando algoritmos de aprendizaje automático 
 (\textit{machine learning} del ingles) para reconstruir la imagen con alta 
@@ -108,23 +110,22 @@ parámetros de algún modelo de difusión. En particular lo hacen para los model
 %para extrapolar conjuntos de datos que no cumplan con las precondiciones para un modelo 
 %determinado. 
 En cambio el trabajo de \citet{Ning2016} combina la 
-t\'ecnica de súper-resolución con el modelo \textit{compressed-sensing} \citep{Naidoo2015} de la señal de difusión. A 
-diferencia del primer trabajo, utiliza un algoritmo de 
-optimización convexa para reconstruir la imagen con alta calidad.
+t\'ecnica de súper-resolución con el modelo de difusión \textit{compressed-sensing} \citep{Naidoo2015}. A 
+diferencia del primer trabajo, utiliza un algoritmo de optimización convexa para reconstruir la imagen con alta 
+calidad. En ambos casos el algoritmo depende fuertemente del modelo seleccionado para representar la señal de difusión.
 
-\subsection{El objetivo}
-El objetivo de este trabajo es analizar la aplicación de la técnica de 
-transferencia de calidad, utilizando el modelo \textit{Multi-Spherical Diffusion MRI} que toma en cuenta además 
-la dimensión temporal \citep{Fick}. Para ello plantearemos el objetivo en términos de un problema 
-de optimización convexa que tengan en cuenta tanto el modelo de la se\~nal como la correlaci\'on 
-que existe entre voxeles vecinos. Plantearlo de esta manera nos permitirá sacar ventajas de la naturaleza esparza 
-de la señal de difusión. Además usaremos algoritmos de aprendizaje automático para clasificar los tipos de tejidos, 
-para poder hacer un realce mas preciso según la región de la imagen. Tanto la complejidad espacial, como temporal de 
-las operaciones necesarias para trabajar con estos vol\'umenes de datos, representan un desafío 
-computacional, en cuanto a desarrollar un algoritmo eficiente que lleve a cabo el realce buscado. 
-Utilizaremos la base de datos \textit{Human Connectome Proyect} \citep{Barch2013}, la cual posee 
-gran cantidad de imágenes dMRI estándares de resolución muy alta.
-
+%\subsection{El objetivo}
+El objetivo de este trabajo es combinar, por primera vez, la técnica de transferencia de calidad imágenes, con el 
+modelo \textit{Multi-Spherical Diffusion MRI} que toma en cuenta además la dimensión temporal \citep{Fick}. Este modelo 
+es el \'unico al momento que utiliza el análisis harmónico para modelar la señal de difusión en función del espacio $q$ 
+y del tiempo de difusión. Para ello plantearemos el objetivo en términos de un problema de optimización convexa, 
+imponiendo además suavidad en la imagen resultante, dado la correlaci\'on que existe entre voxeles vecinos. Plantearlo 
+de esta manera nos permitirá sacar ventajas de la naturaleza esparza de la señal de difusión. Además usaremos 
+algoritmos de aprendizaje automático para clasificar los tipos de tejidos, para poder hacer un realce más preciso según 
+la región de la imagen. Tanto la complejidad espacial, como temporal de las operaciones necesarias para trabajar con 
+estos vol\'umenes de datos, representan un desafío computacional, en cuanto a desarrollar un algoritmo eficiente que 
+lleve a cabo el realce buscado. Utilizaremos la base de datos \textit{Human Connectome Proyect} \citep{Barch2013}, la 
+cual posee gran cantidad de imágenes dMRI con estándares de resolución muy alta.
 
 
 \clearpage
