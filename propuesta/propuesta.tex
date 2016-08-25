@@ -43,7 +43,7 @@ construidas por esta técnica están fuertemente relacionadas con la difusión d
 Estas proveen valiosa información sobre la micro-estructura de los diferentes tipos de tejidos del cerebro 
 (LeBihan and breton 1985). En la actualidad, es la única técnica capaz de evaluar 
 %de forma no invasiva 
-la conectividad cerebral en un cerebro humano vivo y por lo tanto posee un enorme potencial para resolver problemas 
+la conectividad neuronal en un cerebro humano vivo y por lo tanto posee un enorme potencial para resolver problemas 
 actuales en el área de la neurociencia. Los estándares de resolución de hoy en día de dichas imágenes, permiten hacer 
 diversos análisis sobre conjuntos de fibras de mediano y gran tamaño. Sin embargo, estos análisis 
 pierden precisión en regiones donde las fibras son muy pequeñas en comparación al tamaño del voxel (píxel en tres 
@@ -98,20 +98,19 @@ escáners. O bien, pueden utilizar algún modelo de la señal de difusión, de l
 
 
 %\subsection{Otras propuestas con el mismo objetivo}
-Por ejemplo en el trabajo de \citet{Alexander2014} se propone hacer transferencia de 
+Por ejemplo en el trabajo de \citet{Alexander2014} se proponen hacer transferencia de 
 calidad de imágenes utilizando algoritmos de aprendizaje automático 
-(\textit{machine learning} del ingles) para reconstruir la imagen con alta 
-calidad. Entrenando a dicho algoritmo con un conjunto de datos de alta 
-calidad. La novedad de este trabajo es que el realce no se hace directamente 
-sobre la señal de difusión tal como la adquieren los escáners, sino sobre los 
-parámetros de algún modelo de difusión. En particular lo hacen para los modelos DTI y NODDI 
-\citep{Zhang2012}. 
+(\textit{machine learning} del ingles) para construir la imagen con alta 
+calidad. 
+%Entrenando a dicho algoritmo con un conjunto de datos de alta calidad. 
+La novedad de este trabajo es que el realce se hace sobre los parámetros de algún modelo de difusión y no sobre la señal 
+de difusión tal como la adquieren los escáners. En particular lo hacen para los modelos DTI y NODDI \citep{Zhang2012}. 
 %La ventaja de hacer el entrenamiento sobre el modelo en vez de la se\~nal es que se puede utilizar 
 %para extrapolar conjuntos de datos que no cumplan con las precondiciones para un modelo 
 %determinado. 
-En cambio el trabajo de \citet{Ning2016} combina la 
+En cambio el trabajo de \citet{Ning2016} se combina la 
 t\'ecnica de súper-resolución con el modelo de difusión \textit{compressed-sensing} \citep{Naidoo2015}. A 
-diferencia del primer trabajo, utiliza un algoritmo de optimización convexa para reconstruir la imagen con alta 
+diferencia del primer trabajo, utilizan un algoritmo de optimización convexa para reconstruir la imagen con alta 
 calidad. En ambos casos el algoritmo depende fuertemente del modelo seleccionado para representar la señal de difusión.
 
 %\subsection{El objetivo}
@@ -121,11 +120,11 @@ es el \'unico al momento que utiliza el análisis harmónico para modelar la se�
 y del tiempo de difusión. Para ello plantearemos el objetivo en términos de un problema de optimización convexa, 
 imponiendo además suavidad en la imagen resultante, dado la correlaci\'on que existe entre voxeles vecinos. Plantearlo 
 de esta manera nos permitirá sacar ventajas de la naturaleza esparza de la señal de difusión. Además usaremos 
-algoritmos de aprendizaje automático para clasificar los tipos de tejidos, para poder hacer un realce más preciso según 
-la región de la imagen. Tanto la complejidad espacial, como temporal de las operaciones necesarias para trabajar con 
-estos vol\'umenes de datos, representan un desafío computacional, en cuanto a desarrollar un algoritmo eficiente que 
-lleve a cabo el realce buscado. Utilizaremos la base de datos \textit{Human Connectome Proyect} \citep{Barch2013}, la 
-cual posee gran cantidad de imágenes dMRI con estándares de resolución muy alta.
+algoritmos de aprendizaje automático con el fin de clasificar los tipos de tejidos, para poder hacer un realce más 
+preciso según la región de la imagen. Tanto la complejidad espacial, como temporal de las operaciones necesarias para 
+trabajar con estos vol\'umenes de datos, representan un desafío computacional, en cuanto a desarrollar un algoritmo 
+eficiente que lleve a cabo el realce buscado. Utilizaremos la base de datos \textit{Human Connectome Proyect} 
+\citep{Barch2013}, la cual posee gran cantidad de imágenes dMRI con estándares de resolución muy alta.
 
 
 \clearpage
