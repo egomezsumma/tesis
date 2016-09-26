@@ -7,6 +7,9 @@
 \usepackage[english]{babel}
 \usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
 \usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{float}
+
 \begin{document}
 
 %%%% CARATULA
@@ -46,9 +49,101 @@
 %%%% ACA VA EL CONTENIDO DE LA TESIS
 \input{intro.tex}
 
+
 \input{arte.tex}
 
 
+\chapter{Experimento}
+
+En este trabajo nos proponemos combinar los conceptos de transferencia de calidad de imagenes y 
+modelo MAPL. El algoritmo propuesto recontruye una imagen en alta calidad a partir de su 
+equivalente en baja calidad, utilizando informaci\'on de un conjunto de imagenes con altos 
+estandares de calidad. Para ello coinsideraremos la representaci\'on de la imagen con el modelo 
+MAPL, el cual es util para representar se\~nales de difusi\'on funciones bases con un conjunto 
+esparzo de coeficientes. Al igual que en el trabajo de \citep{Ning2016} consideraremos a la 
+imagen de baja resolucion como la version en menor resoluci\'on de la imagen en alta resolucion. 
+Pero a diferencia de este trabajo En la seccion \ref{mapl}.
+
+\section{Teoria}
+
+En esta secci\'on introduciremos brevemente el modelo MAPL que ser\'a utilizado en el algoritmo de 
+reconstrucci\'on propuesto.
+
+\subsection{MAPL}
+Este modelo pertenece a la familia de modelos que representa la se\~nal de difusion como una suma 
+de funciones bases. El mismo es una extension del modelo MAP-MRI (\citet{Ozarslan2013}) que mejora 
+la estimacion de los coeficientes que MAP define, incorporando un regulizador Laplaceano. 
+
+MAP-MRI se puede describir la se\~nal de difusion de la siguiente manera:
+
+\begin{equation}
+    E(q) = \sum_{i}^{N_{coef}} c_i \Phi_{N_i}(q)
+\end{equation}
+
+Donde ${c_i}$ son los coeficientes a ajustar y $\Phi_{N_i}$ son las funciones bases. Las funciones 
+bases esta dada por el producto de tres funciones bases  ortogonales de una dimensi\'on de la 
+siguiente manera.
+
+$$
+    \Phi_{n_1 n_2 n_3} (A, \mathbf{q}) = \phi_{n_1}(U_x, q_x) \phi_{n_2}(U_y, q_y) 
+\phi_{n_3}(U_z, q_z)$$
+  
+con   
+$$\phi_n(u, q) = \frac{i^{-n}}{\sqrt{2} n!} e^{-2\pi^2q^2u^2} H_n(2\pi u q)$$
+
+Donde $H_n$ es el polinomio de Hermite de orden $n$. El parametro $\mathbf{q}$ es el parametro $q$ 
+explicado en la introduci\'on pero rotado en la direcci\'on del mayor autovector del tensor 
+estimado por el modelo DTI en ese punto (\citep{Basser1994}). La llamada matriz de 
+covarianza de desplazamiento $A$ se calculada como $A=2D\tau$, con $\tau$ el tiempo de difusi\'on 
+(\citep{Basser2002}). Los llamados factores de escala $(u_i)$ se obtinen como 
+$A=diag(u_x^2,u_y^2,u_z^2)$. Para un orden radial $N_{rad}$ el numero de coeficiente viene dado por 
+$N_{coef} = (N_{rad}+2)(N_{rad}+4)(2N_{rad}+3)/24$. Para comprender mejor los indices para 
+construir las funciones bases que define MAP veremos un ejemplo con $N_{rad}=2$
+
+\begin{table}[H]
+%\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N_i$ & $n_1$ & $n_2$ & $n_3$ \\
+\hline
+$0$ & $0$ & $0$ & $0$\\
+$1$ & $1$ & $1$ & $0$\\
+$2$ & $0$ & $1$ & $1$\\
+$3$ & $1$ & $0$ & $1$\\
+$4$ & $2$ & $0$ & $0$\\
+$5$ & $0$ & $2$ & $0$\\
+$6$ & $0$ & $0$ & $2$\\
+\hline
+\end{tabular}
+
+\caption{Como vemos cada fila $n_1$,$n_2$ y $n_3$ debe sumar $N_{rad}$ excepto la primera fila y 
+para un $N_{rad}=2$ tenemos $N_{coef}=7$.}
+
+\label{tab:res}
+\end{table}
+
+En nuestro caso no utilizaremos el ajuste con el tensor de difusi\'on en cada punto, es decir 
+no rotamos los $q$ y cada $U_i$ toma el mismo valor en cada punto y el mismo se corresponde con la 
+media de difusividad la cual se define en el c\'odigo de manera razonable.
+% cito rutger: if you set dti_scale_estimation=False, that just means that ``mu'' is the same 
+% everywhere and corresponds to the mean diffusivity, which the code presets to something
+% reasonable.
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HASTA ACA ARTE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 

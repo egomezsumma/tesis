@@ -1,4 +1,3 @@
-
 \chapter{Introducci\'on}
 
 \section{Imágenes por resonancia magnética (MRI)}
@@ -40,7 +39,8 @@ propagan cierto campo magn\'etico en una cierta direcci\'on. Es por ello, que se
 representar como un vector en tres dimensiones. La orientaci\'on del campo la representamos con 
 la direcci\'on del vector y la magnitud del campo con longitud del mismo.
 
-El siguiente fen\'omeno, es la consecuencia de aplicar un campo magnético externo $B$ a partículas que se 
+El siguiente fen\'omeno, es la consecuencia de aplicar un campo magnético externo $B$ a partículas 
+que se 
 encuentran girando en su propio eje. La consecuencia será que estas comenzarán a describir un 
 movimiento de precesi\'on alrededor de un eje imaginario paralelo a la direcci\'on del campo 
 magnético $B$. La frecuencia de este movimiento, en cada part\'icula será proporcional a $B$ y a su 
@@ -62,7 +62,8 @@ Con el fin de poder medir el campo magnético que propagan las partículas, se l
 secuencia de pulsos de radiofrecuencia junto con campos magnéticos gradientes (i.e. que cambian 
 linealmente en el espacio a lo largo de una direcci\'on). Dichos campos magn\'eticos gradientes 
 hacen que las part\'iculas se alineen convenientemente y que a distintas posiciones en el espacio, 
-posean distintas frecuencias de precesi\'on. La posibilidad de alinearlas causa que la resultante de 
+posean distintas frecuencias de precesi\'on. La posibilidad de alinearlas causa que la resultante 
+de 
 los vectores que representan a las part\'iculas ya no se cancelen. Al girar a distintas 
 frecuencias en funci\'on de la posici\'on, ayuda a discriminar de que punto o plano del cuerpo 
 proviene la se\~nal que queremos medir.
@@ -120,13 +121,15 @@ campo magn\'etico gradiente y se enciende otro exactamente igual, pero en
 sentido contrario y durante el mismo per\'iodo de tiempo $\delta$. El primer 
 gradiente causa que los n\'ucleos que est\'an precediendo se desfasen. 
 El desfasaje provoca que una de las tres componentes que posee la resultante de los vectores que 
-representan a los n\'ucleos, se cancele (por convenci\'on se coinsidera la componente vertical). Con 
+representan a los n\'ucleos, se cancele (por convenci\'on se coinsidera la componente vertical). 
+Con 
 lo cual el escáner percibir\'a una ca\'ida de se\~nal mucho m\'as r\'apida que con el experimento 
 sin gradiente $G$. Ahora bien, el segundo gradiente, debería  corregir esa diferencia de fase (ya 
 que le aplica el mismo impulso, el mismo tiempo, pero en el sentido coconsidera. Sin embargo no es 
 del todo cierto, y es porque las part\'iculas no est\'an quietas. Las mismas se est\'an moviendo 
 debido a la difusi\'on. Por lo tanto, la señal global, dada por la suma de los momentos magnéticos 
-de todas las particulas, se atenúa debido a la incoherencia en las orientaciones de los momentos mageneticos
+de todas las particulas, se atenúa debido a la incoherencia en las orientaciones de los momentos 
+mageneticos
 individuales. Entonces esa caída más abrupta de la señal nos 
 aporta informaci\'on de la difusión en ese punto. Es por ello, que para 
 hablar de difusi\'on lo que hacemos es comparar una 
@@ -145,13 +148,22 @@ modelos como NODDI (ref) que adem\'as de distintas direcciones precisan
 distintas intensidades de G. 
 
 El dominio de muestreo de la señal que da origen a este tipo de imágenes, no es solo 
-espacial. Este comprende además la intensidad del gradiente de difusión aplicado, la dirección del mismo y el 
-tiempo de difusión. Todos estos parámetros gracias al trabajo de \citet{CALLAGHAN1990177} pueden ser codificados en una única variable 
-conocida como $q$ (ecuación \ref{eq:3}). Tomar varias mediciones para distintos valores de la variable $q$, se lo denomina 
-muestrear el espacio $q$ (o \textit{q-space} del termino en ingles). Como esta variable esta compuesta por varios parámetros, dependiendo el tipo de experimento se 
-suele hacer variar la dirección de G (a este conjunto de datos se los denomina $only$-$shell$ del termino en ingles). Otros experimentos,
-además hacen variar la intensidad de G (conjunto de datos $multi$-$shell$). Y algunos mas ambiciosos, por la cantidad de datos a manejar, 
-ademas varían el tiempo de difusión. Es por ello que decimos que estas imágenes además de resolución espacial, poseen resolución angular y temporal.
+espacial. Este comprende además la intensidad del gradiente de difusión aplicado, la dirección del 
+mismo y el 
+tiempo de difusión. Todos estos parámetros gracias al trabajo de \citet{CALLAGHAN1990177} pueden 
+ser 
+codificados en una única variable 
+conocida como $q$ (ecuación \ref{eq:3}). Tomar varias mediciones para distintos valores de la 
+variable $q$, se lo denomina 
+muestrear el espacio $q$ (o \textit{q-space} del termino en ingles). Como esta variable esta 
+compuesta por varios parámetros, dependiendo el tipo de experimento se 
+suele hacer variar la dirección de G (a este conjunto de datos se los denomina $only$-$shell$ del 
+termino en ingles). Otros experimentos,
+además hacen variar la intensidad de G (conjunto de datos $multi$-$shell$). Y algunos mas 
+ambiciosos, por la cantidad de datos a manejar, 
+ademas varían el tiempo de difusión. Es por ello que decimos que estas imágenes además de 
+resolución 
+espacial, poseen resolución angular y temporal.
 
 
 \begin{equation} 
@@ -170,7 +182,8 @@ E(q) = \frac{S(q)}{S_0} \hspace{2cm} S_0=S(q=0)
 %\end{center}
 
 A $E(q)$ la llamamos \textit{atenuaci\'on de la señal},  
-$\Delta$ es el tiempo de difusión que es el tiempo entre la activación del primer gradiente y el segundo en 
+$\Delta$ es el tiempo de difusión que es el tiempo entre la activación del primer gradiente y el 
+segundo en 
 sentido contrario, el cual describimos en el párrafo anterior. Esta señal nos 
 habla \'unicamente de la difusi\'on de las part\'iculas de hidr\'ogeno en la misma 
 direcci\'on en la cual se aplico el campo magn\'etico gradiente $G$, en un voxel determinado del 
@@ -205,16 +218,75 @@ a una familia de modelos que parte del enfoque de representar la señal de difus
 herramientas de análisis armónico.
 
 \section{Problema y objetivo}
-Los estándares de resolución de hoy en día de dichas imágenes, permiten hacer diversos análisis sobre conjuntos de 
-fibras de mediano y gran tamaño. Sin embargo, estos análisis pierden precisión en regiones donde los grupos de axones 
-son muy pequeñas en comparación al tamaño del voxel (4 ordenes de magnitud más pequeños). Consecuentemente, existe la 
-necesidad de incrementar tanto la resolución espacial, angular y temporal de las imágenes dMRI. Dado que el dominio de 
-muestreo de la señal difusión, no es solo espacial como ya vimos en la sección anterior. La baja relación señal ruido y el tiempo de adquisición de las 
-imágenes dMRI son unos de los principales factores que limitan la resolución de las mismas. %Los limites para obtener imágenes con alta resolución 
+Los estándares de resolución de hoy en día de las imágenes de difusion, permiten hacer diversos 
+análisis sobre conjuntos de fibras de mediano y gran tamaño. Sin embargo, estos análisis pierden 
+precisión en regiones donde los grupos de axones 
+son muy pequeñas en comparación al tamaño del voxel (4 ordenes de magnitud más pequeños). 
+Consecuentemente, existe la 
+necesidad de incrementar tanto la resolución espacial, angular y temporal de las imágenes dMRI. 
+Dado 
+que el dominio de 
+muestreo de la señal difusión, no es solo espacial como ya vimos en la sección anterior. La baja 
+relación señal ruido y el tiempo de adquisición de las 
+imágenes dMRI son unos de los principales factores que limitan la resolución de las mismas. %Los 
+limites para obtener imágenes con alta resolución 
 %están relacionados con 
 %el tiempo de adquisición de las mismas y la relación señal ruido (la cual decrece 
 %con el tamaño voxel). 
-Hoy en día, existen escáneres que pueden producir imágenes con muy alta resolución. Pero los mismos son muy costosos e 
-imprácticos para escenarios clínicos. El objetivo de este trabajo es aumentar la resolución de las imágenes de difusión.
+Hoy en día, existen escáneres capaces de producir imágenes con muy alta resolución. Pero los mismos 
+son muy costosos e 
+imprácticos para escenarios clínicos. 
+
+El objetivo de este trabajo es diseñar, por primera vez, una técnica de transferencia de calidad 
+imágenes, para el modelo \textit{Multi-Spherical Diffusion MRI} que toma en cuenta además la 
+dimensión temporal 
+\citep{Fick}. Este modelo es el \'unico al momento que utiliza el análisis harmónico para modelar la 
+señal de difusión 
+en función del espacio $q$ y del tiempo de difusión. Lo cual es difícil, debido a que encontrar la 
+manera más adecuada 
+de muestrear un dominio de semejantes proporciones, con el fin de reconstruir fielmente la señal 
+resulta 
+sumamente complicado.
+%Debido que como ante cualquier dominio de muestro de semejantes proporciones, encontrar la manera 
+mas adecuada de 
+%muestrearlo con el fin de poder de recosntruir fielmente la señal resulta sumamente complicado.
+%
+%no ahora tiene que pensar también en la mejor manera muestrear q - espacio
+%(Con puntos cartesianos , líneas radiales , o cáscaras esféricas como la Fig. 1 , o de otro tipo de 
+muestreo no 
+%uniforme ) con el fin de tener medidas de difusión suficientes para reconstruir con firmeza la PEA 
+y evitar la 
+%necesidad de cientos de mediciones de difusión. Diferentes esquemas SAMPLING podrían estar mejor 
+adaptados en función 
+%de las funciones de base elegidos utilizados en el algoritmo de reconstrucción . De hecho , la base 
+3D SPF y la base 
+%polinomios de Hermite tienen más grados de libertad que nuestra ecuación de Laplace , ya que 
+requiere la fase m , 
+%orden ' de la base SH , y el orden polinomio n , mientras que sólo necesitamos la fase y el orden ( 
+' , metro). Esta 
+%flexibilidad adicional podría potencialmente permitir tener un muestreo no uniforme más complejas 
+en el espacio q- . 
+%Por otra parte , dicha flexibilidad podría llegar a ser una dificultad adicional para determinar el 
+esquema de 
+%muestreo óptima.
+Tanto la complejidad espacial, como temporal de 
+las operaciones necesarias para trabajar con estos vol\'umenes de datos, representan un desafío 
+computacional, en cuanto 
+a desarrollar un algoritmo eficiente que lleve a cabo el realce buscado. Para ello plantearemos el 
+objetivo en términos 
+de un problema de optimización convexa, imponiendo además suavidad en la imagen resultante, dado la 
+correlaci\'on que 
+existe entre voxeles vecinos. Plantearlo de esta manera nos permitirá sacar ventajas de la 
+naturaleza esparza de la 
+señal de difusión. Además dada la heterogeneidad de los tejidos neuronales, usaremos algoritmos de 
+aprendizaje 
+automático con el fin de clasificar los tipos de tejidos, para poder hacer un realce más preciso 
+según la región de la 
+imagen. Utilizaremos la base de datos \textit{Human Connectome Project} \citep{Sotiropoulos2013125}, 
+la cual posee gran 
+cantidad de imágenes dMRI con estándares de 
+resolución muy alta.
+
+
 
 
