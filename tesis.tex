@@ -8,6 +8,7 @@
 \usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
 \usepackage{natbib}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{float}
 
 \begin{document}
@@ -70,35 +71,36 @@ En esta secci\'on introduciremos brevemente el modelo MAPL que ser\'a utilizado 
 reconstrucci\'on propuesto.
 
 \subsection{MAPL}
-Este modelo pertenece a la familia de modelos que representa la se\~nal de difusion como una suma 
-de funciones bases. El mismo es una extension del modelo MAP-MRI (\citet{Ozarslan2013}) que mejora 
-la estimacion de los coeficientes que MAP define, incorporando un regulizador Laplaceano. 
 
-MAP-MRI se puede describir la se\~nal de difusion de la siguiente manera:
+El mismo es una extensi\'on del modelo MAP-MRI (\citet{Ozarslan2013}) que mejora 
+la estimaci\'on de los coeficientes que MAP define, incorporando un regulizador Laplaceano. 
+Dicho modelo se propone representar la se\~nal de difusi\'on como una combinaci\'on lineal de un 
+conjunto funciones bases continuas $\Phi_{N_i}(q)$ y un vector esparzo de coeficientes $c \in 
+N_{coef}$ de la siguiente manera:
 
 \begin{equation}
-    E(q) = \sum_{i}^{N_{coef}} c_i \Phi_{N_i}(q)
+    E(q) = \sum_{i=1}^{N_{coef}} c_i \Phi_{N_i}(q)
 \end{equation}
 
 Donde ${c_i}$ son los coeficientes a ajustar y $\Phi_{N_i}$ son las funciones bases. Las funciones 
-bases esta dada por el producto de tres funciones bases  ortogonales de una dimensi\'on de la 
+bases estan dadas por el producto de tres funciones bases ortogonales de una dimensi\'on de la 
 siguiente manera.
 
 $$
-    \Phi_{n_1 n_2 n_3} (A, \mathbf{q}) = \phi_{n_1}(U_x, q_x) \phi_{n_2}(U_y, q_y) 
-\phi_{n_3}(U_z, q_z)$$
+    \Phi_{n_1 n_2 n_3} (A, \mathbf{q}) = \phi_{n_1}(u_x, q_x) \phi_{n_2}(u_y, q_y) 
+\phi_{n_3}(u_z, q_z)$$
   
 con   
 $$\phi_n(u, q) = \frac{i^{-n}}{\sqrt{2} n!} e^{-2\pi^2q^2u^2} H_n(2\pi u q)$$
 
 Donde $H_n$ es el polinomio de Hermite de orden $n$. El parametro $\mathbf{q}$ es el parametro $q$ 
 explicado en la introduci\'on pero rotado en la direcci\'on del mayor autovector del tensor 
-estimado por el modelo DTI en ese punto (\citep{Basser1994}). La llamada matriz de 
-covarianza de desplazamiento $A$ se calculada como $A=2D\tau$, con $\tau$ el tiempo de difusi\'on 
+estimado por el modelo DTI en ese punto (\citep{Basser1994}). $A$ es la matriz de 
+covarianza de desplazamiento, calculada como $A=2D\tau$, con $\tau$ el tiempo de difusi\'on 
 (\citep{Basser2002}). Los llamados factores de escala $(u_i)$ se obtinen como 
 $A=diag(u_x^2,u_y^2,u_z^2)$. Para un orden radial $N_{rad}$ el numero de coeficiente viene dado por 
-$N_{coef} = (N_{rad}+2)(N_{rad}+4)(2N_{rad}+3)/24$. Para comprender mejor los indices para 
-construir las funciones bases que define MAP veremos un ejemplo con $N_{rad}=2$
+$N_{coef} = (N_{rad}+2)(N_{rad}+4)(2N_{rad}+3)/24$. Para comprender mejor como se utilizan los 
+indices para construir las funciones bases que define MAP veremos un ejemplo con $N_{rad}=2$
 
 \begin{table}[H]
 %\centering
@@ -106,29 +108,60 @@ construir las funciones bases que define MAP veremos un ejemplo con $N_{rad}=2$
 \hline
 $N_i$ & $n_1$ & $n_2$ & $n_3$ \\
 \hline
-$0$ & $0$ & $0$ & $0$\\
-$1$ & $1$ & $1$ & $0$\\
-$2$ & $0$ & $1$ & $1$\\
-$3$ & $1$ & $0$ & $1$\\
-$4$ & $2$ & $0$ & $0$\\
-$5$ & $0$ & $2$ & $0$\\
-$6$ & $0$ & $0$ & $2$\\
+$1$ & $0$ & $0$ & $0$\\
+$2$ & $1$ & $1$ & $0$\\
+$3$ & $0$ & $1$ & $1$\\
+$4$ & $1$ & $0$ & $1$\\
+$5$ & $2$ & $0$ & $0$\\
+$6$ & $0$ & $2$ & $0$\\
+$7$ & $0$ & $0$ & $2$\\
 \hline
 \end{tabular}
 
-\caption{Como vemos cada fila $n_1$,$n_2$ y $n_3$ debe sumar $N_{rad}$ excepto la primera fila y 
+\caption{Como vemos cada fila $n_1$, $n_2$ y $n_3$ debe sumar $N_{rad}$ excepto la primera fila y 
 para un $N_{rad}=2$ tenemos $N_{coef}=7$.}
 
 \label{tab:res}
 \end{table}
 
-En nuestro caso no utilizaremos el ajuste con el tensor de difusi\'on en cada punto, es decir 
-no rotamos los $q$ y cada $U_i$ toma el mismo valor en cada punto y el mismo se corresponde con la 
-media de difusividad la cual se define en el c\'odigo de manera razonable.
+En nuestro caso no utilizaremos el ajuste con el tensor de difusi\'on en cada punto. Es decir, 
+no rotamos los $q$ y cada $u_i$ toma el mismo valor en cada punto. Este ultimo se 
+corresponde con la media de difusividad la cual se define en el c\'odigo de manera razonable.
 % cito rutger: if you set dti_scale_estimation=False, that just means that ``mu'' is the same 
 % everywhere and corresponds to the mean diffusivity, which the code presets to something
 % reasonable.
 
+Sea $c$ el vector de dimensi\'on $N_{coef}$ con los coeficientes del modelo y sea $y$ el vector de 
+dimensi\'on $N_{data}$ con la atenuaci\'on de la se\~nal en un determinado voxel. Sea la matriz $Q 
+\in \mathbb{R}^{N_{data} \times N_{coef}}$ con $Q_{ij}=\Phi_{N_j}(A, q_i)$. Dicho vector $c$ se 
+obtine resolviendo el siguiente problema de optimizaci\'on:
+
+
+
+\begin{equation}
+\label{eqMAPL1}
+    \min_{c} \| y-Qc\|^2 + \beta \|c^T U c\|^2
+\end{equation}
+
+
+Siendo $U = \nabla^2 Qc$ el laplaceano de la atenuaci\'on de la se\~nal con $\beta$ el peso de 
+dicho regulizador. El calculo $U$ depende unicamente de $N_{rad}$ y de los 
+factores de escala $u_i$ (para mayor detalle ver demostracion en \citep{Fick2016365}). El objetivo 
+de este termino es imponer suavidad en la se\~nal reconstruida.
+
+
+Finalmente, este modelo se propone representar $E(q) = y$ en terminos del vector esparzo de
+coeficientes $c$, tal que $y = Q c + \epsilon$, con $\epsilon$ el ruido de adquisici\'on. Para 
+conseguir que $c$ sea esparzo se extiende la ecuasi\'on \ref{eqMAPL1} de la sieguiente manera:
+
+
+\begin{equation}
+\label{eqMAPL}
+    \min_{c} \| y-Qc\|^2 + \beta \|c^T U c\|^2 + \alpha \| c\|_1
+\end{equation}
+
+
+donde $ \| c\|_1$ es la norma $\ell_1$ de $c$.
 
 
 
