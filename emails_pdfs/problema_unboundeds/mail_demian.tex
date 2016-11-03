@@ -1,0 +1,222 @@
+\documentclass[a4paper,10pt]{article}
+%\usepackage[letterpaper, landscape, margin=2in]{geometry}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{rotating}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+
+\usepackage{graphicx}
+\graphicspath{ {/cs/inria/iqt/results/} }
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+
+La tesis la empece tengo la introducción y empece a hacer el capitulo que explico el experimento. 
+Pero como hay mas de una formula dando vuelta deje de avanzar con eso. 
+Ademas quiero solucionar los problemas primeros y que me de un resultado respetable (es decir que me de una 
+imagen aunque sea parecida) antes de correr los experimentos definitivos, que ya los charlamos y están programados 
+(bien o mal pero ya estarían). 
+
+Me gustaría un día de estos tal vez con una call pueda explicarme mejor (espero). 
+Pero lo que tengo no lo metería en la tesis así como esta y la verdad que me desmotiva tratar de explicar en lenguaje 
+formal de tesis los resultados que tengo. Igual te hago el pdf para que te sientas cómodo, pero es un intento de explicarte 
+los problemas que tengo. Si querés un día de estos reviso un poco lo que tengo de informe de tesis y te lo envió para que le 
+des una mirada. 
+
+
+Las ultimas dos formulas son:
+
+\vspace{1cm}
+
+$ G(i) \leftarrow train(\{(C^n(i), c^n(i))\}) \hspace{1cm}  (\forall n=1,2 ... n\_samples) (\forall i=1,2 ... N_c ) $
+ 
+$ \hspace{5.5cm} LR^n = downsampling(HR^n) $
+
+
+$ \hspace{5.5cm} C^n  \leftarrow mapl(HR^n).C$
+
+$ \hspace{5.5cm}  c^n \leftarrow mapl(LR^n).C$
+
+
+$ M \leftarrow mapl(Y^{lr}.gtab) $
+
+
+\subsubsection*{Formula 2:}%
+
+$\vspace{1cm} \min_{C^{hr}} \{ \lambda  \left( \sum_{i}^{Nc} ||G(i) C^{hr}(i) - C^{lr}(i)||^2 \right) + \beta ||C^{hr}UC^{hr^t}||^2 +\alpha ||C^{hr}||_{1} + \gamma ||MC^{hr}||_{TV}\}$
+
+
+\subsection*{Diferencia de la Formula 2 con la 3 (la \'ultima):}
+
+
+
+Los pares $(C^n(i), c^n(i))$ con los que se entrena la matriz de downsampling $G(i)$, son todo el patch en la \textit{Formula 2}. 
+Es decir, si el scale es $x2$ y el patch en LR es de $6\times6\times6$ el asociado en HR es de $12\times12\times12$. En cambio en la 
+\textit{Formula 3}, los pares $(C^n(i), c^n(i))$ con los que se entrena la matriz de downsampling $G(i)$, NO son todo el patch. 
+Si el scale es $x2$ y el patch en LR es de $5\times5\times5$, luego el patch de HR asociado es de $2\times2\times2$, pero es solo el 
+pixel del centro de la imagen LR. (ídem paper de iqt de Alexander).
+
+
+
+\section*{Problema de los MSE's:}
+A mi también me parece muy raros esos gráficos con la media y la varianza del error cuadrático medio (Gráficos \ref{rlambda} y \ref{rbeta}) 
+tanto en la formula 2 como en la 3. Te cuento como los obtengo los gráficos. 
+El cross validation lo hago con $T$ grupos. Por cada grupo fiteo $S$ sujetos. 
+Por cada sujeto pruebo $V$ valores de lambda (o beta, o gamma, etc). 
+Por cada corrida guardo el MSE y lo almaceno en una matriz, llamemosla $mse$, de $V\times S\times T$.
+Ademas hago exactamente lo mismo tomando el mse con solo los b's cercanos a $1000$, los cercanos 
+a $2000$ y los cercanos a $3000$. Con eso, una vez que concluyeron todos los procesos, construyo 
+esos gráficos con la mediana y la varianza que siempre te paso en los emails.
+Ocurre que al tomar la media con esos datos me dan valores iguales, por eso los gráficos dan una recta horizontal.
+
+
+En el caso de $\lambda$ inspeccione la matriz $mse$ y todos los valores de una misma fila dan igual. Es decir, $mse[:, x1, x2]$ da una arreglo
+de $V$ valores todos iguales. Fuera cual fuera el valor de $\lambda$ probado da el mismo resultado (ver tabla \ref{tablambda}). 
+
+
+En el caso de beta no dan todos los valores de una misma fila igual como en el caso de lambda. Sin embargo, al calcular el media me da un
+arreglo de $V$ valores todos iguales. Por eso los gráficos son una recta de puntos horizontal (ver tabla \ref{tabbeta}).
+
+
+Te muestro algunos dumps de esos datos en las tablas uno y dos. En la tabla \ref{tablambda} son los mse's del grupo 2 para $\lambda$. 
+En la tabla \ref{tabbeta} lo mismo pero para $\beta$.
+
+
+\begin{sidewaystable}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+\hline 
+subject& $\lambda=1000$ & $\lambda=2000$ & $\lambda=3000$ & $\lambda=4000$ & $\lambda=5000$ & $\lambda=6000$ & $\lambda=7000$ & $\lambda=8000$ & $\lambda=9000$ & $\lambda=10000$\\
+\hline 
+0 &$0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$ & $0.112808$  \\
+1 &$3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ \\
+2 &$0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$ & $0.305762$  \\
+3 &$0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$ & $0.238632$  \\
+4 &$0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$ & $0.136915$  \\
+5 &$0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ & $0.0621422$ \\
+6 &$0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$ & $0.185931$  \\
+7 &$0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$ & $0.154124$  \\
+8 &$0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$ & $0.123842$  \\
+9 &$0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ & $0.0781121$ \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Tabla que muestra el MSE calculado para el grupo numero 2, para cada sujeto fiteado por cada valor de $\lambda$. }
+\label{tablambda}
+\end{sidewaystable}
+
+
+\clearpage
+
+Como podes ver, no importa el valor de $\lambda$ que ponga siempre da el mismo resultado. Todas los resultados fueron hechos 
+con $1000$ iteraciones las cuales terminaron con status \textit{optimal\_inaccurate} y con $intercept=False$.
+
+
+\begin{figure}[H]
+\includegraphics[scale=0.8]{exp6/f1/lamda.201610270948/res/lamda_mean_var_idjob201610270948.pdf}
+\caption{Media del cross-validation para diez valores de $\lambda$ }
+\label{varlambda}
+\end{figure}
+
+
+Acá algunas comparaciones del resultado y el original para esta corrida.
+
+
+\begin{figure}[H]
+%\centering        
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/i_hr_g0.png}
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/A_g0_val0.png}
+
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/i_hr_g1.png}
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/A_g1_val9.png}
+
+
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/i_hr_g3.png}
+\includegraphics[scale=0.4]{exp6/f1/lamda.201610270948/res/A_g1_val5.png}
+
+\caption{A la izquierda las imágenes en HR originales y a la derecha la imagen reconstruida (scale 2x). 
+Arriba un fit del grupo 0 con $\lambda=1000$. En el medio un fit grupo 1 con $\lambda=10000$. Y abajo un fit grupo 3 con $\lambda=6000$}
+\label{rlambda}
+\end{figure}
+
+
+\begin{sidewaystable}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+\hline 
+subject& $\beta=1.452e-15$&$\beta=2.0$&$\beta=4.0$&$\beta=6.0$&$\beta=8.0$&$\beta=10.0$&$\beta=12.0$&$\beta=14.0$&$\beta=16.0$&$\beta=17.99$\\
+\hline 
+0 &$0.112808$ & $0.101262$ & $0.0987396$ & $0.0983493$ & $0.0982331$ & $0.0982035$ & $0.0982458$ & $0.0982786$ & $0.098286$ & $0.0982935$  \\
+1 &$3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$ & $3.35391e+09$  \\
+2 &$0.305762$ & $0.288395$ & $0.285188$ & $0.284296$ & $0.283909$ & $0.283691$ & $0.283562$ & $0.283471$ & $0.283405$ & $0.283355$  \\
+3 &$0.238632$ & $0.279628$ & $0.28629$ & $0.289212$ & $0.29073$ & $0.291474$ & $0.291904$ & $0.292235$ & $0.29254$ & $0.292832$  \\
+4 &$0.136915$ & $0.173356$ & $0.180152$ & $0.183036$ & $0.18452$ & $0.185344$ & $0.185842$ & $0.186176$ & $0.186422$ & $0.186616$  \\
+5 &$0.0621422$ & $0.0373971$ & $0.0361985$ & $0.0360761$ & $0.0359314$ & $0.0358551$ & $0.03581$ & $0.0357804$ & $0.0357585$ & $0.0357418$ \\
+6 &$0.185931$ & $0.226652$ & $0.234429$ & $0.237743$ & $0.239229$ & $0.240089$ & $0.240796$ & $0.24145$ & $0.242027$ & $0.242503$ \\
+7 &$0.154124$ & $0.118315$ & $0.11274$ & $0.111038$ & $0.110262$ & $0.109844$ & $0.109529$ & $0.109326$ & $0.109184$ & $0.109073$ \\
+8 &$0.123842$ & $0.1285$ & $0.128078$ & $0.128217$ & $0.128342$ & $0.128516$ & $0.128616$ & $0.128681$ & $0.128732$ & $0.128774$ \\
+9 &$0.0781121$ & $0.109485$ & $0.116686$ & $0.119693$ & $0.121232$ & $0.122057$ & $0.12254$ & $0.122857$ & $0.123093$ & $0.123285$ \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Tabla que muestra el MSE calculado para el grupo numero 2, para cada sujeto fiteado por cada valor de $\beta$. }
+\label{tabbeta}
+\end{sidewaystable}
+
+
+\clearpage
+
+Como podes ver en este caso no dan el mismo resultado para todos los valores de $\beta$. Sin embargo, al calcular la media 
+y la varianza dan un gráfico horizontal.
+
+
+\begin{figure}[H]
+\includegraphics[scale=0.8]{exp6/f1/beta.201610291334/res/beta_mean_var_idjob201610291334.pdf}
+\caption{Media del cross-validation para diez valores de $\beta$ }
+\label{varlambda}
+\end{figure}
+%/home/leexgo1987/Documentos/cs/inria/iqt/results/exp6/f1/beta.201610291334/res/beta_mean_var_idjob201610291334.pdf
+
+
+
+Acá algunas comparaciones del resultado y el original para esta corrida.
+
+
+\begin{figure}[H]
+%\centering        
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/i_hr_g0.png}
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/A_g0_val0.png}
+
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/i_hr_g1.png}
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/A_g1_val9.png}
+
+
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/i_hr_g3.png}
+\includegraphics[scale=0.4]{exp6/f1/beta.201610291334/res/A_g3_val5.png}
+\caption{A la izquierda las imágenes en HR originales y a la derecha la imagen reconstruida (scale 2x). Arriba un fit del grupo 0 con $\beta=1.4e-15$. En el medio un fit grupo 1 con $\beta=17.99$. Y abajo un fit grupo 3 con $\beta=10.0$.}
+\label{rlambda}
+\end{figure}
+%/home/leexgo1987/Documentos/cs/inria/iqt/results/exp6/f1/beta
+
+
+\section*{Problema de los unbounded:}
+
+En el caso de la \textit{formula 3}, como la imagen se hace de a pedazos (en mi caso de $2\times 2 \times 2$. Tengo pedacitos en los cuales la optimizacion 
+terminaron con status $unbounded$. Por eso hay cuadrados en negro en las siguientes imágenes.
+Ya probé entrenando las $G's$ con $5$ sujetos y con $10$. Ambas dan imágenes parecidas, es decir con muchos cuadrados en negro. 
+(por los unbounded). Te recuerdo que la $G$ el algoritmo de machine learning de $sckitlearn$ la construye tal que $Gx=y$, 
+siendo x una matriz de $catidad_de_voxels_hr \times n_samples$ e $y$ una matriz de $catidad_de_voxels_lr \times n_samples$. 
+En el caso de la formula 3 $x: 8\times10$ e $y:125\times10$. Tendrá algo que ver eso? Digo porque Alexander aprendía en el sentido 
+contrario, de una LR a una HR. 
+
+
+Sobre el $intercept$ que da le algoritmo de machine learning. En el caso de la \textit{formula 2}, siempre corro los experimentos con 
+el $intercept=False$. En el caso de la \textit{formula 3} siempre con $intercept=True$. Los casos contrarios, se ven incluso peor las 
+imágenes de resultados.
+
+
+\end{document}
